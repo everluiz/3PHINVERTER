@@ -14,5 +14,11 @@ void setup_GPIO(void);
 void setup_ePWM(void);
 void setup_ADC_A(void);
 void setup_ADC_B(void);
+void Setup_UART(void);
+
+#define CPU_FREQ        200E6
+#define LSPCLK_FREQ     CPU_FREQ/4
+#define SCI_FREQ        115200
+#define SCI_PRD         (LSPCLK_FREQ/(SCI_FREQ*8))-1
 
 #endif /* APPLICATION_SETUP_H_ */

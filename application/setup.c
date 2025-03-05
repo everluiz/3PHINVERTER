@@ -32,7 +32,7 @@ void setup_GPIO(void){
     GpioDataRegs.GPADAT.bit.GPIO12 = 0;                      // Inicializa a saida em estado logico baixo
     GpioCtrlRegs.GPACSEL2.bit.GPIO12 = GPIO_MUX_CPU1;        // Designa a CPU1 para controlar a GPIO
 
-    // GPIO 13 como controle do gate IGBT do SC
+    // GPIO 13 como controle do gate IGBT do SC e BAT
     GpioCtrlRegs.GPAGMUX1.bit.GPIO13 = 0;                    // Configura MUX e GMUX para usar a GPIO 13 como saida
     GpioCtrlRegs.GPAMUX1.bit.GPIO13 = 0;
     GpioCtrlRegs.GPAPUD.bit.GPIO13 = 1;                      // Desabilita os resistores de pull-up
@@ -107,6 +107,19 @@ void setup_GPIO(void){
     GpioCtrlRegs.GPAMUX1.bit.GPIO11 = 1;    // configura como PWM o pino 11
     GpioCtrlRegs.GPAPUD.bit.GPIO11 = 1;     // Disable pull-up on GPIO9
 
+    //GPIO 42 e 43 USCI-A
+    GpioCtrlRegs.GPBGMUX1.bit.GPIO42 = 3;
+    GpioCtrlRegs.GPBMUX1.bit.GPIO42 = 3;
+    GpioCtrlRegs.GPBPUD.bit.GPIO42 = 1;
+    GpioCtrlRegs.GPBDIR.bit.GPIO42 = 1;
+    GpioCtrlRegs.GPBCSEL2.bit.GPIO42 = GPIO_MUX_CPU1;
+
+    GpioCtrlRegs.GPBGMUX1.bit.GPIO43 = 3;
+    GpioCtrlRegs.GPBMUX1.bit.GPIO43 = 3;
+    GpioCtrlRegs.GPBPUD.bit.GPIO43 = 0;
+    GpioCtrlRegs.GPBDIR.bit.GPIO43 = 0;
+    GpioCtrlRegs.GPBCSEL2.bit.GPIO43 = GPIO_MUX_CPU1;
+    GpioCtrlRegs.GPBQSEL1.bit.GPIO43 = 3;           // Asynch input
 
     EDIS;
 }
@@ -519,6 +532,38 @@ void setup_ADC_B(void){
     AdcbRegs.ADCINTSEL1N2.bit.INT1E = 1;            // enable INT1 flag
     AdcbRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;          // INT1 flag cleared
     EDIS;
+}
+
+void Setup_UART(void){
+    // pg 2279 spruhm8i.pdf - Technical reference
+    SciaRegs.SCICCR.all = 0x0007;           // 1 stop bit,  No loopback, no parity,8 char bits,
+    //SciaRegs.SCICCR.bit.SCICHAR = 0x07;     // SCI character length from one to eight           bits
+
+    // async mode, idle-line protocol
+    SciaRegs.SCICTL1.all = 0x0003;          // enable TX, RX, internal SCICLK, Disable RX ERR, SLEEP, TXWAKE
+    SciaRegs.SCICTL2.bit.TXINTENA = 0;
+    SciaRegs.SCICTL2.bit.RXBKINTENA = 1;    // enable RX interrupt
+    SciaRegs.SCIHBAUD.all = 0x0000;         // SCI_PRD LSB
+    SciaRegs.SCILBAUD.all = SCI_PRD;        // SCI_PRD MSB
+
+    // buffer msg registers
+    SciaRegs.SCIFFTX.all = 0xC022; // every word put in buffer is transmitted
+    SciaRegs.SCIFFRX.all = 0x0028; // receive and store eight words in buffer to then call int.
+
+    /*
+    SciaRegs.SCIFFRX.bit.RXFFOVF = 0;
+    SciaRegs.SCIFFRX.bit.RXFFOVRCLR = 0;
+    SciaRegs.SCIFFRX.bit.RXFIFORESET = 0;
+    SciaRegs.SCIFFRX.bit.RXFFST = 0;
+    SciaRegs.SCIFFRX.bit.RXFFINT = 0;
+    SciaRegs.SCIFFRX.bit.RXFFINTCLR = 0;
+    SciaRegs.SCIFFRX.bit.RXFFIENA = 1;
+    SciaRegs.SCIFFRX.bit.RXFFIL = 1;*/
+
+    SciaRegs.SCIFFCT.all = 0x00;
+    SciaRegs.SCICTL1.all = 0x0023;     // Relinquish SCI from Reset
+    SciaRegs.SCIFFTX.bit.TXFIFORESET = 1;
+    SciaRegs.SCIFFRX.bit.RXFIFORESET = 1;
 }
 
 
