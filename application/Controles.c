@@ -129,10 +129,14 @@ unsigned int control_period = 2; // runs control at 20 khz
 float sumAll = 0.0;                 // variable that stores the whole sum of PowerVec[]
 uint16_t MpCount = 1;               // counter of how much values have entered the vector
 uint16_t avgCounter = 0;            // counter to sample P_PV at a specific period
+uint16_t varCounter = 0;            // counter to sample P_PV at a specific period
 uint16_t MpPointer = 0;            // pointer to the tail of PowerVec
-uint16_t PowerVec [MP_VALUE] = {0};    // vector who stores P_PV
+uint16_t PowerVec [MAX_PERIOD] = {0};    // vector who stores P_PV
 float AvgPower = 0.0;               // variable that store the current Moving Average
 float MA_sum = 0.0;               // variable that store the current sum of point to the Moving Average
+float sum_sq_diff = 0.0;          // variability sum
+float old_mean = 0.0;             // mean before update
+float std_dev = 0.0;
 
 //                                 VARIAVEIS CONTROLE DO INVERSOR
 volatile float sin_th = 0.0;
@@ -224,34 +228,21 @@ void controle_boost_paineisPV(float v_pv_ref, int enable){
     }
 }
 
+/* Function: variability - MUST RUN AFTER moving_average() func.
+ * -----------------------------------------------------
+ * Computes the incremental variability or standard deviation  (Welford's Algorithm).
+ *
+ */
+void variability(){
+    // Atualizar a soma das diferenças quadradas (M2)
+    sum_sq_diff += (p_pv_new - old_mean) * (p_pv_new - AvgPower);
+    std_dev = sqrt(sum_sq_diff / MAX_PERIOD);
+}
 /* Function: moving_average
  * -----------------------------------------------------
  * Computes the moving average of the PV power generated
  *
  */
-void moving_average_loop(){
-    p_pv_new = iLdc_new * v_pv_new; // also calculated in MPPT() func.
-    uint16_t Mp = MP_VALUE;
-    if(avgCounter > AVG_COUNTER_LEN){
-        uint16_t var; // for() loop counter variable
-        avgCounter = 0;
-        if(MpCount < Mp){
-            Mp = MpCount;
-            MpCount++;
-        }
-        sumAll = 0.0;
-        for (var = Mp-1; var >= 1; var--) { // shift the vector
-            PowerVec[var] = PowerVec[var - 1];
-            sumAll += PowerVec[var];
-        }
-        PowerVec[0] = p_pv_new; // update the vector with the new reading
-        sumAll += p_pv_new;     // add to the sum the new reading
-
-        AvgPower = (float) sumAll/Mp; // new value of AvgPower
-    }else{
-        avgCounter++;
-    }
-}
 void moving_average(){
     //p_pv_new = iLdc_new * v_pv_new; // calculated in MPPT() func.
     if(avgCounter >= AVG_COUNTER_LEN){
