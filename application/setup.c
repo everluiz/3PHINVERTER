@@ -107,19 +107,33 @@ void setup_GPIO(void){
     GpioCtrlRegs.GPAMUX1.bit.GPIO11 = 1;    // configura como PWM o pino 11
     GpioCtrlRegs.GPAPUD.bit.GPIO11 = 1;     // Disable pull-up on GPIO9
 
-    //GPIO 42 e 43 USCI-A
-    GpioCtrlRegs.GPBGMUX1.bit.GPIO42 = 3;
-    GpioCtrlRegs.GPBMUX1.bit.GPIO42 = 3;
-    GpioCtrlRegs.GPBPUD.bit.GPIO42 = 1;
-    GpioCtrlRegs.GPBDIR.bit.GPIO42 = 1;
-    GpioCtrlRegs.GPBCSEL2.bit.GPIO42 = GPIO_MUX_CPU1;
+    //GPIO 28 e 29 USCI-A
 
-    GpioCtrlRegs.GPBGMUX1.bit.GPIO43 = 3;
-    GpioCtrlRegs.GPBMUX1.bit.GPIO43 = 3;
-    GpioCtrlRegs.GPBPUD.bit.GPIO43 = 0;
-    GpioCtrlRegs.GPBDIR.bit.GPIO43 = 0;
-    GpioCtrlRegs.GPBCSEL2.bit.GPIO43 = GPIO_MUX_CPU1;
-    GpioCtrlRegs.GPBQSEL1.bit.GPIO43 = 3;           // Asynch input
+    //GpioCtrlRegs.GPAGMUX2.bit.GPIO28 = 3;
+    GpioCtrlRegs.GPAMUX2.bit.GPIO28 = 1;
+    GpioCtrlRegs.GPAPUD.bit.GPIO28 = 1;
+    GpioCtrlRegs.GPADIR.bit.GPIO28 = 1;
+    GpioCtrlRegs.GPACSEL4.bit.GPIO28 = GPIO_MUX_CPU1;
+
+    //GpioCtrlRegs.GPAGMUX2.bit.GPIO29 = 3;
+    GpioCtrlRegs.GPAMUX2.bit.GPIO29 = 1;
+    GpioCtrlRegs.GPAPUD.bit.GPIO29 = 1;
+    GpioCtrlRegs.GPADIR.bit.GPIO29 = 1;
+    GpioCtrlRegs.GPACSEL4.bit.GPIO29 = GPIO_MUX_CPU1;
+    GpioCtrlRegs.GPAQSEL2.bit.GPIO29 = 3;           // Asynch input
+
+//    GpioCtrlRegs.GPBGMUX1.bit.GPIO42 = 3;
+//    GpioCtrlRegs.GPBMUX1.bit.GPIO42 = 3;
+//    GpioCtrlRegs.GPBPUD.bit.GPIO42 = 1;
+//    GpioCtrlRegs.GPBDIR.bit.GPIO42 = 1;
+//    GpioCtrlRegs.GPBCSEL2.bit.GPIO42 = GPIO_MUX_CPU1;
+//
+//    GpioCtrlRegs.GPBGMUX1.bit.GPIO43 = 3;
+//    GpioCtrlRegs.GPBMUX1.bit.GPIO43 = 3;
+//    GpioCtrlRegs.GPBPUD.bit.GPIO43 = 0;
+//    GpioCtrlRegs.GPBDIR.bit.GPIO43 = 0;
+//    GpioCtrlRegs.GPBCSEL2.bit.GPIO43 = GPIO_MUX_CPU1;
+//    GpioCtrlRegs.GPBQSEL1.bit.GPIO43 = 3;           // Asynch input
 
     EDIS;
 }
