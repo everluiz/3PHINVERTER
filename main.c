@@ -41,6 +41,9 @@ int comando_ligar = 0;
 #define SOC_SC_MAX          95.625
 #define SC_NOM_VOLTAGE      320
 
+//UART constants
+#define BUFFER_SIZE 2
+unsigned char buffer_tx[2];
 
 //------- DECLARACAO DE VARIAVEIS ----------
 volatile uint16_t adcinA0;
@@ -49,7 +52,7 @@ volatile uint16_t adcinA2;
 volatile uint16_t adcinA3;
 volatile uint16_t adcinA4;
 volatile uint16_t adcinA5;
-// Não ha conexao na controlCARD de adcinA6, A7, B6, B7.
+// Nao ha conexao na controlCARD de adcinA6, A7, B6, B7.
 volatile uint16_t adcinB0;
 volatile uint16_t adcinB1;
 volatile uint16_t adcinB2;
@@ -121,7 +124,7 @@ float FIS_plot[FIS_PLOT_SIZE];
 
 __interrupt void isr_cpu_timer0(void);
 __interrupt void isr_adc(void);
-
+void send_buffer_tx(void);
 
 
 int main(void)
@@ -156,6 +159,7 @@ int main(void)
     setup_ePWM();
     setup_ADC_A();
     setup_ADC_B();
+    Setup_UART();
 
 
     EALLOW;
@@ -380,10 +384,23 @@ int main(void)
             if(FIS_plot_counter >= FIS_PLOT_SIZE){
                 FIS_plot_counter = 0;
             }
+            buffer_tx[0] = ( ( ((int)(FIS_output*100.0)) & 0xFF00 ) >> 8 );
+            buffer_tx[1] = ( ((int)(FIS_output*100.0)) & 0x00FF );
+            send_buffer_tx();
             #endif
 
             temporizacao1(0.5);
         }
+    }
+}
+
+void send_buffer_tx(void){
+    int i;
+    for(i = 0; i < BUFFER_SIZE; i++){
+        //while (SciaRegs.SCIFFTX.bit.TXFFST != 0){}
+        while(!SciaRegs.SCICTL2.bit.TXRDY){
+        }
+        SciaRegs.SCITXBUF.all = buffer_tx[i];
     }
 }
 
