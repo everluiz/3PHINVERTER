@@ -132,7 +132,8 @@ uint16_t avgCounter = 0;            // counter to sample P_PV at a specific peri
 uint16_t varCounter = 0;            // counter to sample P_PV at a specific period
 uint16_t MpPointer = 0;            // pointer to the tail of PowerVec
 uint16_t PowerVec [MAX_PERIOD] = {0};    // vector who stores P_PV
-float AvgPower = 0.0;               // variable that store the current Moving Average
+extern float AvgPower;               // variable that store the current Moving Average
+extern float AvgPowerVAR;           // variable that store the variability Moving Average
 float MA_sum = 0.0;               // variable that store the current sum of point to the Moving Average
 float sum_sq_diff = 0.0;          // variability sum
 float old_mean = 0.0;             // mean before update

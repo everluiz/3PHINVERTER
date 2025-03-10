@@ -42,8 +42,8 @@ int comando_ligar = 0;
 #define SC_NOM_VOLTAGE      320
 
 //UART constants
-#define BUFFER_SIZE 2
-unsigned char buffer_tx[2];
+#define BUFFER_SIZE 4
+unsigned char buffer_tx[4];
 
 //------- DECLARACAO DE VARIAVEIS ----------
 volatile uint16_t adcinA0;
@@ -111,6 +111,10 @@ PIREG1 C_Iq_inv= PIREG1_DEFAULTS;
 // FIS variables
 float inputs[3] = {3000.0, 50.0, 240.0};
 float FIS_output;
+
+// M.A. variable
+float AvgPower = 0.0;               // variable that store the current Moving Average
+float AvgPowerVAR = 0.0;            // variable that store the Moving Average to variability calc.
 
 #define FIS_PLOT_SIZE       700
 #if DEBUG
@@ -376,6 +380,11 @@ int main(void)
             limpa_temporizador1();
             //fis_EMS3inputs_init();
             //fis_counter = 0;
+
+            // divide FIS_output into MSB and LSB to send
+            buffer_tx[0] = ( ( ((int)(FIS_output*100.0)) & 0xFF00 ) >> 8 );
+            buffer_tx[1] = ( ((int)(FIS_output*100.0)) & 0x00FF );
+
             fis_EMS3inputs_run((float[]){HESS_power_ref, SoC_est, v_sc}, &FIS_output);            // leva entre 10ms a 30ms para calcular a FIS
 
             #if DEBUG
@@ -384,8 +393,13 @@ int main(void)
             if(FIS_plot_counter >= FIS_PLOT_SIZE){
                 FIS_plot_counter = 0;
             }
-            buffer_tx[0] = ( ( ((int)(FIS_output*100.0)) & 0xFF00 ) >> 8 );
-            buffer_tx[1] = ( ((int)(FIS_output*100.0)) & 0x00FF );
+//            // divide FIS_output into MSB and LSB to send
+//            buffer_tx[0] = ( ( ((int)(FIS_output*100.0)) & 0xFF00 ) >> 8 );
+//            buffer_tx[1] = ( ((int)(FIS_output*100.0)) & 0x00FF );
+            // divide AvgPower into MSB and LSB to send
+//            buffer_tx[2] = ( ( ((int)AvgPower) & 0xFF00 ) >> 8 );
+//            buffer_tx[3] = ( ((int)AvgPower) & 0x00FF );
+
             send_buffer_tx();
             #endif
 
@@ -458,6 +472,10 @@ __interrupt void isr_adc(void){
     iLbat_new = adcinB5*0.0367 -75.3759;
 
     maq_estados_inv();
+
+    // divide AvgPower into MSB and LSB to send
+    buffer_tx[2] = ( ( ((int)AvgPower) & 0xFF00 ) >> 8 );
+    buffer_tx[3] = ( ((int)AvgPower) & 0x00FF );
 
     AdcaRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;          // Clear ADCINT1 flag for next SOC
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;         // Acknowledge interrupt to PIE
