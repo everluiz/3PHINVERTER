@@ -130,14 +130,16 @@ float sumAll = 0.0;                 // variable that stores the whole sum of Pow
 uint16_t MpCount = 1;               // counter of how much values have entered the vector
 uint16_t avgCounter = 0;            // counter to sample P_PV at a specific period
 uint16_t varCounter = 0;            // counter to sample P_PV at a specific period
-uint16_t MpPointer = 0;            // pointer to the tail of PowerVec
+uint16_t MpPointer = 0;            // pointer to the tail of PowerVec (AvgPower)
+uint16_t VARPointer = 0;            // pointer to the tail of PowerVec (AvgPowerVAR over MAX_PERIOD)
 uint16_t PowerVec [MAX_PERIOD] = {0};    // vector who stores P_PV
-extern float AvgPower;               // variable that store the current Moving Average
+extern float AvgPower;              // variable that store the current Moving Average
 extern float AvgPowerVAR;           // variable that store the variability Moving Average
-float MA_sum = 0.0;               // variable that store the current sum of point to the Moving Average
-float sum_sq_diff = 0.0;          // variability sum
-float old_mean = 0.0;             // mean before update
-float std_dev = 0.0;
+float MA_sum = 0.0;                 // variable that store the current sum of point to the Moving Average
+float VAR_sum = 0.0;                // variability sum
+float old_mean = 0.0;               // mean before update
+float std_dev = 0.0;                // standard deviation variable
+float sum_sq_diff = 0.0;            // sum for std_dev
 
 //                                 VARIAVEIS CONTROLE DO INVERSOR
 volatile float sin_th = 0.0;
@@ -248,17 +250,38 @@ void moving_average(){
     //p_pv_new = iLdc_new * v_pv_new; // calculated in MPPT() func.
     if(avgCounter >= AVG_COUNTER_LEN){
         avgCounter = 0;
-        if(MpCount < MP_VALUE){ // loading the Power array (first MP_VALUE interaction)
-            MA_sum = MA_sum + p_pv_new;
+        if(MpCount <= MA_CURRENT){ // loading the Power array (first interaction)
+            MA_sum += p_pv_new;
             AvgPower = MA_sum/MpCount;
             MpCount++;
-        }else{
-            MA_sum = MA_sum + p_pv_new - PowerVec[MpPointer];
-            AvgPower = MA_sum/MP_VALUE;
-        }
 
-        PowerVec[MpPointer] = p_pv_new;                                 // last value in PowerVec is replaced for new p_pv
-        MpPointer = (MpPointer < (MP_VALUE-1) ) ? MpPointer+1 : 0;      // update the pointer for the PowerVec tail
+            VAR_sum = MA_sum;
+        }else{
+            MpPointer = (VARPointer < MA_CURRENT) ? (MAX_PERIOD-(MA_CURRENT-VARPointer)) : (VARPointer-MA_CURRENT);
+            MA_sum = MA_sum + p_pv_new - PowerVec[MpPointer];
+            AvgPower = MA_sum/MA_CURRENT; // current M.A (over MP
+
+            //variablility M.A. (over MAX_PERIOD)
+            if(MpCount <= MAX_PERIOD){ // loading the Power array (first interaction)
+                VAR_sum += p_pv_new;
+                AvgPowerVAR = VAR_sum/MpCount;
+
+                sum_sq_diff += (p_pv_new - AvgPowerVAR) * (p_pv_new - AvgPowerVAR);
+                std_dev = sqrt(sum_sq_diff / MpCount);
+
+                MpCount++;
+            }else{
+                VAR_sum += p_pv_new - PowerVec[VARPointer];
+                AvgPowerVAR = VAR_sum/MAX_PERIOD;
+
+                sum_sq_diff -= (PowerVec[VARPointer] - old_mean) * (PowerVec[VARPointer] - old_mean);
+                sum_sq_diff += (p_pv_new - AvgPowerVAR) * (p_pv_new - AvgPowerVAR);
+                std_dev = sqrt(sum_sq_diff / MAX_PERIOD);
+            }
+        }
+        old_mean = AvgPowerVAR;
+        PowerVec[VARPointer] = p_pv_new;                                 // last value in PowerVec is replaced for new p_pv
+        VARPointer = (VARPointer < (MAX_PERIOD-1) ) ? VARPointer+1 : 0;    // update the pointer for the PowerVec tail (AvgPower)
     }else{
         avgCounter++;
     }

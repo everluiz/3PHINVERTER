@@ -31,8 +31,8 @@
 // timeframe = 600 (seconds ( 10*60 -> 10 minutes))
 // MP_VALUE = timeframe / avgPeriod = 1200
 
-// MP_VALUE = 200 is 100 seconds of MA window
-#define MP_VALUE                200                                      // tamanho do vetor de pontos da media movel
+// MA_CURRENT = 200 is 100 seconds of MA window
+#define MA_CURRENT              200                                      // tamanho do vetor de pontos da media movel
 #define MAX_PERIOD              1200                                     // 600 seconds
 #define MIN_PERIOD              120                                      // 60 seconds
 
