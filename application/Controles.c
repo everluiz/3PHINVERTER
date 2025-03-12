@@ -138,7 +138,7 @@ extern float AvgPowerVAR;           // variable that store the variability Movin
 float MA_sum = 0.0;                 // variable that store the current sum of point to the Moving Average
 float VAR_sum = 0.0;                // variability sum
 float old_mean = 0.0;               // mean before update
-float std_dev = 0.0;                // standard deviation variable
+extern float std_dev = 0.0;         // standard deviation variable
 float sum_sq_diff = 0.0;            // sum for std_dev
 
 //                                 VARIAVEIS CONTROLE DO INVERSOR

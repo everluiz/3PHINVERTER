@@ -42,8 +42,8 @@ int comando_ligar = 0;
 #define SC_NOM_VOLTAGE      320
 
 //UART constants
-#define BUFFER_SIZE 4
-unsigned char buffer_tx[4];
+#define BUFFER_SIZE 6
+unsigned char buffer_tx[6];
 
 //------- DECLARACAO DE VARIAVEIS ----------
 volatile uint16_t adcinA0;
@@ -115,6 +115,7 @@ float FIS_output;
 // M.A. variable
 float AvgPower = 0.0;               // variable that store the current Moving Average
 float AvgPowerVAR = 0.0;            // variable that store the Moving Average to variability calc.
+float std_dev = 0.0;                // standard deviation (variability) variable
 
 #define FIS_PLOT_SIZE       700
 #if DEBUG
@@ -385,6 +386,7 @@ int main(void)
             buffer_tx[0] = ( ( ((int)(FIS_output*100.0)) & 0xFF00 ) >> 8 );
             buffer_tx[1] = ( ((int)(FIS_output*100.0)) & 0x00FF );
 
+
             fis_EMS3inputs_run((float[]){HESS_power_ref, SoC_est, v_sc}, &FIS_output);            // leva entre 10ms a 30ms para calcular a FIS
 
             #if DEBUG
@@ -476,6 +478,10 @@ __interrupt void isr_adc(void){
     // divide AvgPower into MSB and LSB to send
     buffer_tx[2] = ( ( ((int)AvgPower) & 0xFF00 ) >> 8 );
     buffer_tx[3] = ( ((int)AvgPower) & 0x00FF );
+
+    // divide std_dev into MSB and LSB to send
+    buffer_tx[4] = ( ( ((int)(std_dev*100.0)) & 0xFF00 ) >> 8 );
+    buffer_tx[5] = ( ((int)(std_dev*100.0)) & 0x00FF );
 
     AdcaRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;          // Clear ADCINT1 flag for next SOC
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;         // Acknowledge interrupt to PIE
