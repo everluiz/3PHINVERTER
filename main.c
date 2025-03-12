@@ -480,8 +480,8 @@ __interrupt void isr_adc(void){
     buffer_tx[3] = ( ((int)AvgPower) & 0x00FF );
 
     // divide std_dev into MSB and LSB to send
-    buffer_tx[4] = ( ( ((int)(std_dev*100.0)) & 0xFF00 ) >> 8 );
-    buffer_tx[5] = ( ((int)(std_dev*100.0)) & 0x00FF );
+    buffer_tx[4] = ( ( ((int)std_dev) & 0xFF00 ) >> 8 );
+    buffer_tx[5] = ( ((int)std_dev) & 0x00FF );
 
     AdcaRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;          // Clear ADCINT1 flag for next SOC
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;         // Acknowledge interrupt to PIE
