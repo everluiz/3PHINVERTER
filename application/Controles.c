@@ -83,7 +83,7 @@ extern float FIS_output;
 
 // mppt variables
 float p_pv_old = 0;     // PV power [n-1]
-float p_pv_new = 0;     // PV power [n]
+extern float p_pv_new;     // PV power [n]
 extern float v_pv;         // PV voltage [n]
 extern float v_pv_new;     // PV filtered voltage [n]
 float v_pv_old = 0;     // PV filtered voltage [n-1]
@@ -126,20 +126,23 @@ unsigned int count_control = 0; // counter to enter control
 unsigned int control_period = 2; // runs control at 20 khz
 
 // Moving average variables
-float sumAll = 0.0;                 // variable that stores the whole sum of PowerVec[]
-uint16_t MpCount = 1;               // counter of how much values have entered the vector
-uint16_t avgCounter = 0;            // counter to sample P_PV at a specific period
-uint16_t varCounter = 0;            // counter to sample P_PV at a specific period
-uint16_t MpPointer = 0;            // pointer to the tail of PowerVec (AvgPower)
-uint16_t VARPointer = 0;            // pointer to the tail of PowerVec (AvgPowerVAR over MAX_PERIOD)
-uint16_t PowerVec [MAX_PERIOD] = {0};    // vector who stores P_PV
-extern float AvgPower;              // variable that store the current Moving Average
-extern float AvgPowerVAR;           // variable that store the variability Moving Average
-float MA_sum = 0.0;                 // variable that store the current sum of point to the Moving Average
-float VAR_sum = 0.0;                // variability sum
-float old_mean = 0.0;               // mean before update
-extern float std_dev;         // standard deviation variable
-float sum_sq_diff = 0.0;            // sum for std_dev
+float sumAll = 0.0;                     // whole sum of PowerVec[]
+uint16_t MpCount = 1;                   // counter of how much values have entered the vector
+uint16_t avgCounter = 0;                // counter to sample P_PV at a specific period
+uint16_t varCounter = 0;                // counter to sample P_PV at a specific period
+uint16_t MpPointer = 0;                 // pointer to the tail of PowerVec (AvgPower)
+uint16_t VARPointer = 0;                // pointer to the tail of PowerVec (AvgPowerVAR over MAX_PERIOD)
+uint16_t PowerVec [MAX_PERIOD] = {0};   // vector who stores P_PV
+uint16_t MeanVec [MAX_PERIOD] = {0};    // vector who stores AvgPowerVAR
+extern float AvgPower;                  // current Moving Average
+extern float AvgPowerVAR;               // variability Moving Average
+float MA_sum = 0.0;                     // current sum of point to the Moving Average
+float VAR_sum = 0.0;                    // variability sum
+float AvgPowerVAR_old = 0.0;
+extern float std_dev;                   // standard deviation variable
+float sum_sq_diff = 0.0;                // sum for std_dev
+
+float MAsumVec[MA_POINTS] = {0.0};               // array of sum of points to the Moving Average
 
 //                                 VARIAVEIS CONTROLE DO INVERSOR
 volatile float sin_th = 0.0;
@@ -231,20 +234,25 @@ void controle_boost_paineisPV(float v_pv_ref, int enable){
     }
 }
 
-/* Function: variability - MUST RUN AFTER moving_average() func.
+/* Function: update_MAsumVec
  * -----------------------------------------------------
- * Computes the incremental variability or standard deviation  (Welford's Algorithm).
  *
  */
-void variability(){
-    // Atualizar a soma das diferenças quadradas (M2)
-    sum_sq_diff += (p_pv_new - old_mean) * (p_pv_new - AvgPower);
-    std_dev = sqrt(sum_sq_diff / MAX_PERIOD);
+void update_MAsumVec(){
+    uint16_t index;
+    uint16_t current;
+    uint16_t var;
+    for (var = 0; var < MA_POINTS; var++){
+        current = ((var+1)*120);
+        index = (VARPointer < current) ? (MAX_PERIOD-(current-VARPointer)) : (VARPointer-current);
+        MAsumVec[var] += p_pv_new - PowerVec[index];
+    }
 }
 /* Function: moving_average
  * -----------------------------------------------------
  * Computes the moving average of the PV power generated
  *
+ * Computes the Variability (standard deviation of moving average)
  */
 void moving_average(){
     //p_pv_new = iLdc_new * v_pv_new; // calculated in MPPT() func.
@@ -256,6 +264,7 @@ void moving_average(){
             MpCount++;
 
             VAR_sum = MA_sum;
+            AvgPowerVAR = AvgPower;
         }else{
             MpPointer = (VARPointer < MA_CURRENT) ? (MAX_PERIOD-(MA_CURRENT-VARPointer)) : (VARPointer-MA_CURRENT);
             MA_sum = MA_sum + p_pv_new - PowerVec[MpPointer];
@@ -274,13 +283,15 @@ void moving_average(){
                 VAR_sum += p_pv_new - PowerVec[VARPointer];
                 AvgPowerVAR = VAR_sum/MAX_PERIOD;
 
-                sum_sq_diff -= (PowerVec[VARPointer] - old_mean) * (PowerVec[VARPointer] - old_mean);
-                sum_sq_diff += (p_pv_new - AvgPowerVAR) * (p_pv_new - AvgPowerVAR);
+                //sum_sq_diff -= (PowerVec[VARPointer] - MeanVec[VARPointer]) * (PowerVec[VARPointer] - MeanVec[VARPointer]);
+                sum_sq_diff -= (PowerVec[VARPointer] - AvgPowerVAR_old) * (PowerVec[VARPointer] - AvgPowerVAR_old);
+                sum_sq_diff += ((uint16_t) p_pv_new - AvgPowerVAR) * ((uint16_t) p_pv_new - AvgPowerVAR);
                 std_dev = sqrt(sum_sq_diff / MAX_PERIOD);
             }
         }
-        old_mean = AvgPowerVAR;
         PowerVec[VARPointer] = p_pv_new;                                 // last value in PowerVec is replaced for new p_pv
+        //MeanVec[VARPointer] = AvgPowerVAR;
+        AvgPowerVAR_old = AvgPowerVAR;
         VARPointer = (VARPointer < (MAX_PERIOD-1) ) ? VARPointer+1 : 0;    // update the pointer for the PowerVec tail (AvgPower)
     }else{
         avgCounter++;
@@ -365,7 +376,7 @@ void controle_bidirecional_bat(float duty_cycle, int enable){
  *
  */
 void estimador_SoC(){
-    carga_consumida += iLbat_new * 0.000025/3600.0; // convertendo corrente em A para Ah
+    carga_consumida += iLbat_new * 0.00005/3600.0; // convertendo corrente em A para Ah
     //SoC_est += ((float) (carga_consumida/C_nominal)*100.0);
     if ((carga_consumida > 0.01) || (carga_consumida < -0.01)){
         SoC_est += carga_consumida;

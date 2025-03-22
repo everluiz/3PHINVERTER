@@ -42,8 +42,8 @@ int comando_ligar = 0;
 #define SC_NOM_VOLTAGE      320
 
 //UART constants
-#define BUFFER_SIZE 6
-unsigned char buffer_tx[6];
+#define BUFFER_SIZE 8
+unsigned char buffer_tx[8];
 
 //------- DECLARACAO DE VARIAVEIS ----------
 volatile uint16_t adcinA0;
@@ -73,6 +73,7 @@ float iLdc_new = 0;     // filtered current boost
 //// mppt variables
 //float p_pv_old = 0;     // PV power [n-1]
 //float p_pv_new = 0;     // PV power [n]
+float p_pv_new = 0;     // PV power [n]
 float v_pv = 0;         // PV voltage [n]
 float Vcc[2] = {0,0};   // Link CC voltage [n]
 float v_pv_new = 0;     // PV filtered voltage [n]
@@ -482,6 +483,9 @@ __interrupt void isr_adc(void){
     // divide std_dev into MSB and LSB to send
     buffer_tx[4] = ( ( ((int)std_dev) & 0xFF00 ) >> 8 );
     buffer_tx[5] = ( ((int)std_dev) & 0x00FF );
+
+    buffer_tx[6] = ( ( ((int)p_pv_new) & 0xFF00 ) >> 8 );
+    buffer_tx[7] = ( ((int)p_pv_new) & 0x00FF );
 
     AdcaRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;          // Clear ADCINT1 flag for next SOC
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;         // Acknowledge interrupt to PIE
