@@ -7,8 +7,8 @@
 #include "Controles.h"
 
 //                                              VARIAVEIS, CONSTANTES E ESTRUTURAS
-#define plotsize 2000
-uint16_t plot[plotsize]; // plot vector for debug
+//#define plotsize 2000
+//uint16_t plot[plotsize]; // plot vector for debug
 uint32_t index = 0;
 uint16_t conexao = 0; // DEBUG
 
@@ -142,7 +142,7 @@ float AvgPowerVAR_old = 0.0;
 extern float std_dev;                   // standard deviation variable
 float sum_sq_diff = 0.0;                // sum for std_dev
 
-float MAsumVec[MA_POINTS] = {0.0};               // array of sum of points to the Moving Average
+uint16_t MAsumVec[MA_POINTS] = {0.0};               // array of sum of points to the Moving Average
 
 //                                 VARIAVEIS CONTROLE DO INVERSOR
 volatile float sin_th = 0.0;
@@ -258,6 +258,7 @@ void moving_average(){
     //p_pv_new = iLdc_new * v_pv_new; // calculated in MPPT() func.
     if(avgCounter >= AVG_COUNTER_LEN){
         avgCounter = 0;
+
         if(MpCount <= MA_CURRENT){ // loading the Power array (first interaction)
             MA_sum += p_pv_new;
             AvgPower = MA_sum/MpCount;
@@ -265,6 +266,7 @@ void moving_average(){
 
             VAR_sum = MA_sum;
             AvgPowerVAR = AvgPower;
+            sum_sq_diff += (((uint16_t) p_pv_new) - ((uint16_t) AvgPowerVAR) ) * (((uint16_t) p_pv_new) - ((uint16_t) AvgPowerVAR) );
         }else{
             MpPointer = (VARPointer < MA_CURRENT) ? (MAX_PERIOD-(MA_CURRENT-VARPointer)) : (VARPointer-MA_CURRENT);
             MA_sum = MA_sum + p_pv_new - PowerVec[MpPointer];
@@ -275,7 +277,7 @@ void moving_average(){
                 VAR_sum += p_pv_new;
                 AvgPowerVAR = VAR_sum/MpCount;
 
-                sum_sq_diff += (p_pv_new - AvgPowerVAR) * (p_pv_new - AvgPowerVAR);
+                sum_sq_diff += (((uint16_t) p_pv_new) - ((uint16_t) AvgPowerVAR) ) * (((uint16_t) p_pv_new) - ((uint16_t) AvgPowerVAR) );
                 std_dev = sqrt(sum_sq_diff / MpCount);
 
                 MpCount++;
@@ -283,14 +285,18 @@ void moving_average(){
                 VAR_sum += p_pv_new - PowerVec[VARPointer];
                 AvgPowerVAR = VAR_sum/MAX_PERIOD;
 
-                //sum_sq_diff -= (PowerVec[VARPointer] - MeanVec[VARPointer]) * (PowerVec[VARPointer] - MeanVec[VARPointer]);
-                sum_sq_diff -= (PowerVec[VARPointer] - AvgPowerVAR_old) * (PowerVec[VARPointer] - AvgPowerVAR_old);
-                sum_sq_diff += ((uint16_t) p_pv_new - AvgPowerVAR) * ((uint16_t) p_pv_new - AvgPowerVAR);
+                sum_sq_diff -= ( PowerVec[VARPointer] - MeanVec[VARPointer]) * ( PowerVec[VARPointer] - MeanVec[VARPointer]);
+                //sum_sq_diff -= ((uint16_t) PowerVec[VARPointer] - AvgPowerVAR_old) * ((uint16_t) PowerVec[VARPointer] - AvgPowerVAR_old);
+                sum_sq_diff += (((uint16_t) p_pv_new) - ((uint16_t) AvgPowerVAR) ) * (((uint16_t) p_pv_new) - ((uint16_t) AvgPowerVAR) );
                 std_dev = sqrt(sum_sq_diff / MAX_PERIOD);
             }
         }
+        if(sum_sq_diff < 0.0){
+            sum_sq_diff = 0.0;
+        }
+
         PowerVec[VARPointer] = p_pv_new;                                 // last value in PowerVec is replaced for new p_pv
-        //MeanVec[VARPointer] = AvgPowerVAR;
+        MeanVec[VARPointer] = AvgPowerVAR;
         AvgPowerVAR_old = AvgPowerVAR;
         VARPointer = (VARPointer < (MAX_PERIOD-1) ) ? VARPointer+1 : 0;    // update the pointer for the PowerVec tail (AvgPower)
     }else{
@@ -525,7 +531,7 @@ void modulacao_3_niveis(void)
     duty_b = dq0_abc1.b/V_CC;
     duty_c = dq0_abc1.c/V_CC;
 
-    plot[index] = (uint16_t)(180*(1 + duty_c)); // plot sin(w) in debug
+    //plot[index] = (uint16_t)(180*(1 + duty_c)); // plot sin(w) in debug
 
     if(duty_a > 0.99) duty_a = 0.99;
     else if(duty_a < -0.99) duty_a = -0.99;
@@ -645,7 +651,7 @@ void controle_inv(){
 //======================================================================================================================================================
 void maq_estados_inv()
 {
-    index = (index == plotsize) ? 0 : (index+1); // index counter for plot signal in debug
+    //index = (index == plotsize) ? 0 : (index+1); // index counter for plot signal in debug
     switch(estado_atual){
             case FORA_DE_OPERACAO:                                              // Neste estado, o inversor esta completamente desativado e desconectado
                 if(comando_ligar==LIGADO){                                      // Ao receber um comando de LIGAR, inicia a operacao
