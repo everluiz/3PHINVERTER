@@ -132,8 +132,8 @@ uint16_t avgCounter = 0;                // counter to sample P_PV at a specific 
 uint16_t varCounter = 0;                // counter to sample P_PV at a specific period
 uint16_t MpPointer = 0;                 // pointer to the tail of PowerVec (AvgPower)
 uint16_t VARPointer = 0;                // pointer to the tail of PowerVec (AvgPowerVAR over MAX_PERIOD)
-uint16_t PowerVec [MAX_PERIOD] = {0};   // vector who stores P_PV
-uint16_t MeanVec [MAX_PERIOD] = {0};    // vector who stores AvgPowerVAR
+float PowerVec [MAX_PERIOD] = {0};   // vector who stores P_PV
+float MeanVec [MAX_PERIOD] = {0};    // vector who stores AvgPowerVAR
 extern float AvgPower;                  // current Moving Average
 extern float AvgPowerVAR;               // variability Moving Average
 float MA_sum = 0.0;                     // current sum of point to the Moving Average
@@ -266,7 +266,7 @@ void moving_average(){
 
             VAR_sum = MA_sum;
             AvgPowerVAR = AvgPower;
-            sum_sq_diff += (((uint16_t) p_pv_new) - ((uint16_t) AvgPowerVAR) ) * (((uint16_t) p_pv_new) - ((uint16_t) AvgPowerVAR) );
+            sum_sq_diff += ( p_pv_new -  AvgPowerVAR ) * ( p_pv_new - AvgPowerVAR );
         }else{
             MpPointer = (VARPointer < MA_CURRENT) ? (MAX_PERIOD-(MA_CURRENT-VARPointer)) : (VARPointer-MA_CURRENT);
             MA_sum = MA_sum + p_pv_new - PowerVec[MpPointer];
@@ -277,7 +277,7 @@ void moving_average(){
                 VAR_sum += p_pv_new;
                 AvgPowerVAR = VAR_sum/MpCount;
 
-                sum_sq_diff += (((uint16_t) p_pv_new) - ((uint16_t) AvgPowerVAR) ) * (((uint16_t) p_pv_new) - ((uint16_t) AvgPowerVAR) );
+                sum_sq_diff += ( p_pv_new - AvgPowerVAR ) * ( p_pv_new - AvgPowerVAR );
                 std_dev = sqrt(sum_sq_diff / MpCount);
 
                 MpCount++;
@@ -287,7 +287,7 @@ void moving_average(){
 
                 sum_sq_diff -= ( PowerVec[VARPointer] - MeanVec[VARPointer]) * ( PowerVec[VARPointer] - MeanVec[VARPointer]);
                 //sum_sq_diff -= ((uint16_t) PowerVec[VARPointer] - AvgPowerVAR_old) * ((uint16_t) PowerVec[VARPointer] - AvgPowerVAR_old);
-                sum_sq_diff += (((uint16_t) p_pv_new) - ((uint16_t) AvgPowerVAR) ) * (((uint16_t) p_pv_new) - ((uint16_t) AvgPowerVAR) );
+                sum_sq_diff += ( p_pv_new - AvgPowerVAR ) * (p_pv_new - AvgPowerVAR );
                 std_dev = sqrt(sum_sq_diff / MAX_PERIOD);
             }
         }

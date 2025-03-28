@@ -79,8 +79,10 @@ SECTIONS
    codestart        : > BEGIN,     PAGE = 0
 //   .text            : > RAMLS0 ,   PAGE = 0 //| RAMLS1 | RAMLS2 | RAMLS3 | RAMLS4
    .text            : > RAMGS2 ,   PAGE = 1 //| RAMLS1 | RAMLS2 | RAMLS3 | RAMLS4
-   .cinit           : > RAMM0,     PAGE = 0
-   .switch          : > RAMM0,     PAGE = 0
+//   .cinit           : > RAMM0,     PAGE = 0 //RAMLS0
+   .cinit           : > RAMLS0,     PAGE = 0 //
+//   .switch          : > RAMM0,     PAGE = 0
+   .switch          : > RAMLS0,     PAGE = 0
    .reset           : > RESET,     PAGE = 0, TYPE = DSECT /* not used, */
    .stack           : > RAMM1,     PAGE = 1
 
@@ -108,7 +110,7 @@ SECTIONS
 
 #ifdef __TI_COMPILER_VERSION__
    #if __TI_COMPILER_VERSION__ >= 15009000
-    .TI.ramfunc : {} > RAMM0,      PAGE = 0
+    .TI.ramfunc : {} > RAMLS0,      PAGE = 0
    #else
     ramfuncs    : > RAMM0      PAGE = 0
    #endif
