@@ -267,10 +267,12 @@ void moving_average(){
             VAR_sum = MA_sum;
             AvgPowerVAR = AvgPower;
             sum_sq_diff += ( p_pv_new -  AvgPowerVAR ) * ( p_pv_new - AvgPowerVAR );
+            std_dev = (MpCount > 1) ? (sqrt(sum_sq_diff / (MpCount-1) )) : 0;
+            MpCount++;
         }else{
             MpPointer = (VARPointer < MA_CURRENT) ? (MAX_PERIOD-(MA_CURRENT-VARPointer)) : (VARPointer-MA_CURRENT);
             MA_sum = MA_sum + p_pv_new - PowerVec[MpPointer];
-            AvgPower = MA_sum/MA_CURRENT; // current M.A (over MP
+            AvgPower = MA_sum/MA_CURRENT; // current M.A
 
             //variablility M.A. (over MAX_PERIOD)
             if(MpCount <= MAX_PERIOD){ // loading the Power array (first interaction)
@@ -278,7 +280,7 @@ void moving_average(){
                 AvgPowerVAR = VAR_sum/MpCount;
 
                 sum_sq_diff += ( p_pv_new - AvgPowerVAR ) * ( p_pv_new - AvgPowerVAR );
-                std_dev = sqrt(sum_sq_diff / MpCount);
+                std_dev = sqrt(sum_sq_diff / (MpCount-1));
 
                 MpCount++;
             }else{
@@ -288,7 +290,7 @@ void moving_average(){
                 sum_sq_diff -= (( PowerVec[VARPointer] - MeanVec[VARPointer]) * ( PowerVec[VARPointer] - MeanVec[VARPointer]));
                 //sum_sq_diff -= ((uint16_t) PowerVec[VARPointer] - AvgPowerVAR_old) * ((uint16_t) PowerVec[VARPointer] - AvgPowerVAR_old);
                 sum_sq_diff += ( p_pv_new - AvgPowerVAR ) * (p_pv_new - AvgPowerVAR );
-                std_dev = sqrt(sum_sq_diff / MAX_PERIOD);
+                std_dev = sqrt(sum_sq_diff / (MAX_PERIOD-1));
             }
         }
         if(sum_sq_diff < 0.0){
