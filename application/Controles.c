@@ -294,16 +294,10 @@ void moving_average(){
         avgCounter = 0;
 
         if(MpCount <= MA_CURRENT){ // loading the Power array (first interaction)
-<<<<<<< HEAD
             //MA_sum += p_pv_new;
             update_MAsumVec();
             AvgPower = MAsumVec[2]/MpCount;
             MpCount++;
-=======
-            MA_sum += p_pv_new;
-            AvgPower = MA_sum/MpCount;
-
->>>>>>> 3b7cceec79d7b5e36169dcba3140ad3618269e34
 
             VAR_sum += p_pv_new;
             AvgPowerVAR = AvgPower;
@@ -311,14 +305,6 @@ void moving_average(){
             std_dev = (MpCount > 1) ? (sqrt(sum_sq_diff / (MpCount-1) )) : 0;
             MpCount++;
         }else{
-<<<<<<< HEAD
-=======
-            MpPointer = (VARPointer < MA_CURRENT) ? (MAX_PERIOD-(MA_CURRENT-VARPointer)) : (VARPointer-MA_CURRENT);
-            MA_sum = MA_sum + p_pv_new - PowerVec[MpPointer];
-            AvgPower = MA_sum/MA_CURRENT; // current M.A
-
-            //variablility M.A. (over MAX_PERIOD)
->>>>>>> 3b7cceec79d7b5e36169dcba3140ad3618269e34
             if(MpCount <= MAX_PERIOD){ // loading the Power array (first interaction)
 
                 MpPointer = (VARPointer < MA_CURRENT) ? (MAX_PERIOD-(MA_CURRENT-VARPointer)) : (VARPointer-MA_CURRENT);
@@ -340,16 +326,12 @@ void moving_average(){
                 sum_sq_diff -= (( PowerVec[VARPointer] - MeanVec[VARPointer]) * ( PowerVec[VARPointer] - MeanVec[VARPointer]));
                 //sum_sq_diff -= ((uint16_t) PowerVec[VARPointer] - AvgPowerVAR_old) * ((uint16_t) PowerVec[VARPointer] - AvgPowerVAR_old);
                 sum_sq_diff += ( p_pv_new - AvgPowerVAR ) * (p_pv_new - AvgPowerVAR );
-<<<<<<< HEAD
                 std_dev = sqrt(sum_sq_diff / MAX_PERIOD);
 
                 update_MAwindow();
                 update_MAsumVec();
 
                 AvgPower = MAsumVec[MAsumVecPointer]/MAsize[MAsumVecPointer]; // current M.A
-=======
-                std_dev = sqrt(sum_sq_diff / (MAX_PERIOD-1));
->>>>>>> 3b7cceec79d7b5e36169dcba3140ad3618269e34
             }
         }
         if(sum_sq_diff < 0.0){
