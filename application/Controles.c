@@ -132,8 +132,8 @@ uint16_t avgCounter = 0;                // counter to sample P_PV at a specific 
 uint16_t varCounter = 0;                // counter to sample P_PV at a specific period
 uint16_t MpPointer = 0;                 // pointer to the tail of PowerVec (AvgPower)
 uint16_t VARPointer = 0;                // pointer to the tail of PowerVec (AvgPowerVAR over MAX_PERIOD)
-float PowerVec [MAX_PERIOD] = {0};   // vector who stores P_PV
-float MeanVec [MAX_PERIOD] = {0};    // vector who stores AvgPowerVAR
+float PowerVec [MAX_PERIOD] = {0};      // vector who stores P_PV
+float MeanVec [MAX_PERIOD] = {0};       // vector who stores AvgPowerVAR
 extern float AvgPower;                  // current Moving Average
 extern float AvgPowerVAR;               // variability Moving Average
 float MA_sum = 0.0;                     // current sum of point to the Moving Average
@@ -142,8 +142,11 @@ float AvgPowerVAR_old = 0.0;
 extern float std_dev;                   // standard deviation variable
 float sum_sq_diff = 0.0;                // sum for std_dev
 
-uint16_t MAsumVec[MA_POINTS] = {0.0};               // array of sum of points to the Moving Average
 
+uint16_t MAsize[MA_POINTS] = {100, 200, 300, 400, 500, 600, 700, 800, 900, 1200};
+uint16_t MAsumVec[MA_POINTS] = {0.0};   // array of sum of points to the Moving Average
+uint16_t MAsumVecPointer = 0;           // pointer to the current MAsumVec position
+uint16_t MAsumVecpreviousPointer = 0;   // pointer to the previous MAsumVec position
 //                                 VARIAVEIS CONTROLE DO INVERSOR
 volatile float sin_th = 0.0;
 volatile float cos_th = 1.0;
@@ -234,17 +237,48 @@ void controle_boost_paineisPV(float v_pv_ref, int enable){
     }
 }
 
+/* Function: update_MAwindow
+ * -----------------------------------------------------
+ * Update the array pointer of witch MA window will be currently used
+ *
+ * 0s-| 100s| 200s| 300s| 400s| 500s| 600s| 700s| 800s| 900s| 1200s
+ *   100 - 150 - 200 - 250 - 300 - 400 - 600 - 800 - 900 - 1000
+ */
+void update_MAwindow(){
+    static const uint16_t thresholds[] = {100, 150, 200, 250, 300, 400, 600, 800, 900, 1000};
+    static const uint16_t num_thresholds = sizeof(thresholds) / sizeof(thresholds[0]);
+    static const uint16_t hysteresis = 20; // Hysteresis margin
+
+    MAsumVecPointer = 0; // Default value if std_dev is below the first threshold
+    static uint16_t i;
+    for(i = 0; i < num_thresholds; i++){
+        if(std_dev > thresholds[i]){
+            MAsumVecPointer = i + 1;
+        } else {
+            break;
+        }
+    }
+
+    // Apply hysteresis: Change pointer only if std_dev exceeds the previous threshold by a margin
+    if (MAsumVecPointer > MAsumVecpreviousPointer) {
+        // Allow increase immediately
+        MAsumVecpreviousPointer = MAsumVecPointer;
+    } else if ((MAsumVecPointer < MAsumVecpreviousPointer) && (std_dev < (thresholds[MAsumVecpreviousPointer] - hysteresis)) ) {
+        // Allow decrease only when std_dev is significantly below the previous threshold
+        MAsumVecpreviousPointer = MAsumVecPointer;
+    }
+    MAsumVecPointer = MAsumVecpreviousPointer;
+}
+
 /* Function: update_MAsumVec
  * -----------------------------------------------------
- *
+ * Update the array MAsumVec, for every MA window
  */
 void update_MAsumVec(){
-    uint16_t index;
-    uint16_t current;
-    uint16_t var;
+    static uint16_t index;
+    static uint16_t var;
     for (var = 0; var < MA_POINTS; var++){
-        current = ((var+1)*120);
-        index = (VARPointer < current) ? (MAX_PERIOD-(current-VARPointer)) : (VARPointer-current);
+        index = (VARPointer < MAsize[var]) ? (MAX_PERIOD-(MAsize[var]-VARPointer)) : (VARPointer-MAsize[var]);
         MAsumVec[var] += p_pv_new - PowerVec[index];
     }
 }
@@ -260,20 +294,22 @@ void moving_average(){
         avgCounter = 0;
 
         if(MpCount <= MA_CURRENT){ // loading the Power array (first interaction)
-            MA_sum += p_pv_new;
-            AvgPower = MA_sum/MpCount;
+            //MA_sum += p_pv_new;
+            update_MAsumVec();
+            AvgPower = MAsumVec[2]/MpCount;
             MpCount++;
 
-            VAR_sum = MA_sum;
+            VAR_sum += p_pv_new;
             AvgPowerVAR = AvgPower;
             sum_sq_diff += ( p_pv_new -  AvgPowerVAR ) * ( p_pv_new - AvgPowerVAR );
         }else{
-            MpPointer = (VARPointer < MA_CURRENT) ? (MAX_PERIOD-(MA_CURRENT-VARPointer)) : (VARPointer-MA_CURRENT);
-            MA_sum = MA_sum + p_pv_new - PowerVec[MpPointer];
-            AvgPower = MA_sum/MA_CURRENT; // current M.A (over MP
-
-            //variablility M.A. (over MAX_PERIOD)
             if(MpCount <= MAX_PERIOD){ // loading the Power array (first interaction)
+
+                MpPointer = (VARPointer < MA_CURRENT) ? (MAX_PERIOD-(MA_CURRENT-VARPointer)) : (VARPointer-MA_CURRENT);
+                //MA_sum = MA_sum + p_pv_new - PowerVec[MpPointer];
+                update_MAsumVec();
+                AvgPower = MAsumVec[2]/MAsize[2]; // current M.A
+
                 VAR_sum += p_pv_new;
                 AvgPowerVAR = VAR_sum/MpCount;
 
@@ -281,7 +317,7 @@ void moving_average(){
                 std_dev = sqrt(sum_sq_diff / MpCount);
 
                 MpCount++;
-            }else{
+            }else{ // PowerVec fully loaded
                 VAR_sum += p_pv_new - PowerVec[VARPointer];
                 AvgPowerVAR = VAR_sum/MAX_PERIOD;
 
@@ -289,6 +325,11 @@ void moving_average(){
                 //sum_sq_diff -= ((uint16_t) PowerVec[VARPointer] - AvgPowerVAR_old) * ((uint16_t) PowerVec[VARPointer] - AvgPowerVAR_old);
                 sum_sq_diff += ( p_pv_new - AvgPowerVAR ) * (p_pv_new - AvgPowerVAR );
                 std_dev = sqrt(sum_sq_diff / MAX_PERIOD);
+
+                update_MAwindow();
+                update_MAsumVec();
+
+                AvgPower = MAsumVec[MAsumVecPointer]/MAsize[MAsumVecPointer]; // current M.A
             }
         }
         if(sum_sq_diff < 0.0){
