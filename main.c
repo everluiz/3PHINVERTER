@@ -95,6 +95,7 @@ float SoC_est = 50;                     // State of Charge of the battery
 float ESS_power_ref = 0.0;              // power reference for one ESS unit
 float HESS_power_ref = 0.0;             // power reference for the HESS
 uint32_t fis_counter = 0;
+uint16_t MAsumVecPointer = 0;           // pointer to the current MAsumVec position
 
 // control variables
 PIREG1 C_PV_iL = PIREG1_DEFAULTS;
@@ -384,8 +385,13 @@ int main(void)
             //fis_counter = 0;
 
             // divide FIS_output into MSB and LSB to send
-            buffer_tx[0] = ( ( ((int)(FIS_output*100.0)) & 0xFF00 ) >> 8 );
-            buffer_tx[1] = ( ((int)(FIS_output*100.0)) & 0x00FF );
+            buffer_tx[0] = (int)(FIS_output*10.0);
+            //buffer_tx[1] = ( ((int)(FIS_output*100.0)) & 0x00FF );
+
+            // divide MAsumVecPointer into MSB and LSB to send
+            //buffer_tx[0] = ( ( ((int)(MAsumVecPointer)) & 0xFF00 ) >> 8 );
+            buffer_tx[1] = (int)(MAsumVecPointer);
+
 
 
             fis_EMS3inputs_run((float[]){HESS_power_ref, SoC_est, v_sc}, &FIS_output);            // leva entre 10ms a 30ms para calcular a FIS

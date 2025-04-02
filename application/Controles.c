@@ -142,8 +142,8 @@ float sum_sq_diff = 0.0;                // sum for std_dev
 
 
 uint16_t MAsize[MA_POINTS] = {100, 200, 300, 400, 500, 600, 700, 800, 900, 1200};
-float MAsumVec[MA_POINTS] = {0.0};   // array of sum of points to the Moving Average
-uint16_t MAsumVecPointer = 0;           // pointer to the current MAsumVec position
+float MAsumVec[MA_POINTS] = {0.0};      // array of sum of points to the Moving Average
+extern uint16_t MAsumVecPointer;        // pointer to the current MAsumVec position
 uint16_t MAsumVecpreviousPointer = 0;   // pointer to the previous MAsumVec position
 //                                 VARIAVEIS CONTROLE DO INVERSOR
 volatile float sin_th = 0.0;
