@@ -244,12 +244,11 @@ void controle_boost_paineisPV(float v_pv_ref, int enable){
  */
 void update_MAwindow(){
     static const uint16_t thresholds[] = {100, 150, 200, 250, 300, 400, 600, 800, 900, 1000};
-    static const uint16_t num_thresholds = sizeof(thresholds) / sizeof(thresholds[0]);
-    static const uint16_t hysteresis = 20; // Hysteresis margin
+    static const uint16_t hysteresis = 10; // Hysteresis margin
 
     MAsumVecPointer = 0; // Default value if std_dev is below the first threshold
     static uint16_t i;
-    for(i = 0; i < num_thresholds; i++){
+    for(i = 0; i < THRESHOLDS; i++){
         if(std_dev > thresholds[i]){
             MAsumVecPointer = i + 1;
         } else {
