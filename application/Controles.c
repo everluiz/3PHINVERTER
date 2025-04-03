@@ -446,17 +446,38 @@ void gera_referencia(){
 void gera_referencia_HESS(){
     HESS_power_ref = p_pv_new - AvgPower;                  // Compute the power reference for the HESS
 
-    // calcula a referencia de potencia para os armazenadores
-    if((FIS_output > 2.3) || (FIS_output < -2.3)){
+//    // calcula a referencia de potencia para os armazenadores
+//    if((FIS_output > 2.3) || (FIS_output < -2.3)){
+//        SC_power_ref = 0;
+//        BAT_power_ref = HESS_power_ref;
+//    }else if((0.3 < FIS_output) && (FIS_output < 1.3)){
+//        SC_power_ref = HESS_power_ref;
+//        BAT_power_ref = 0;
+//    }else if((-1.3 < FIS_output) && (FIS_output < -0.3)){
+//        SC_power_ref = HESS_power_ref;
+//        BAT_power_ref = 0;
+//    }else if((-0.3 < FIS_output) && (FIS_output < 0.3)){
+//        SC_power_ref = 0;
+//        BAT_power_ref = 0;
+//    }else{
+//        SC_power_ref = (FIS_output > 0.0) ? HESS_power_ref*(1.0 -(FIS_output-1.3)) : HESS_power_ref*(1.0 -(-1.3 -FIS_output));
+//        BAT_power_ref = (FIS_output > 0.0) ? HESS_power_ref*(FIS_output-1.3) : HESS_power_ref*(-1.3 -FIS_output);
+//    }
+    if (fabs(FIS_output) > 2.3) {
         SC_power_ref = 0;
         BAT_power_ref = HESS_power_ref;
-    }else if((-1.3 < FIS_output) && (FIS_output < 1.3)){
+    } else if (fabs(FIS_output) > 0.3 && fabs(FIS_output) < 1.3) {
         SC_power_ref = HESS_power_ref;
         BAT_power_ref = 0;
-    }else{
-        SC_power_ref = (FIS_output > 0.0) ? HESS_power_ref*(1.0 -(FIS_output-1.3)) : HESS_power_ref*(1.0 -(-1.3 -FIS_output));
-        BAT_power_ref = (FIS_output > 0.0) ? HESS_power_ref*(FIS_output-1.3) : HESS_power_ref*(-1.3 -FIS_output);
+    } else if (fabs(FIS_output) <= 0.3) {
+        SC_power_ref = 0;
+        BAT_power_ref = 0;
+    } else {
+        double weight = (FIS_output > 0) ? (1.0 - (FIS_output - 1.3)) : (1.0 - (-1.3 - FIS_output));
+        SC_power_ref = HESS_power_ref * weight;
+        BAT_power_ref = HESS_power_ref * (1.0 - weight);
     }
+
     // calcura a referencia de corrente para o SC
     iLsc_ref = (v_sc_new > 0.0) ? SC_power_ref/v_sc_new : 0;   // Compute the current ref. for the SC controller
 
