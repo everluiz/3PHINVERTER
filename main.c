@@ -97,6 +97,14 @@ float HESS_power_ref = 0.0;             // power reference for the HESS
 uint32_t fis_counter = 0;
 uint16_t MAsumVecPointer = 0;           // pointer to the current MAsumVec position
 
+// Filter variables
+filter lpf_iL_pv = filter_DEFAULTS;
+filter lpf_v_pv = filter_DEFAULTS;
+filter lpf_v_sc = filter_DEFAULTS;
+filter lpf_iL_sc = filter_DEFAULTS;
+filter lpf_iL_bat = filter_DEFAULTS;
+filter lpf_v_cc = filter_DEFAULTS;
+
 // control variables
 PIREG1 C_PV_iL = PIREG1_DEFAULTS;
 PIREG1 C_PV_voltage = PIREG1_DEFAULTS;
@@ -185,72 +193,79 @@ int main(void)
     //CpuTimer0Regs.TCR.all = 0x4001;
 
 
-//    // const. low pass filter 2 khz
-//    lpf_iL_pv.a1 = -1.5645;
-//    lpf_iL_pv.a2 = 0.6437;
-//    lpf_iL_pv.a3 = 0;
-//    lpf_iL_pv.b0 = 0.0198;
-//    lpf_iL_pv.b1 = 0.0396;
-//    lpf_iL_pv.b2 = 0.0198;
-//    lpf_iL_pv.b3 = 0;
-//    lpf_iL_pv.calc = (void (*)(unsigned int))filter_calc;
-//    lpf_iL_pv.reset = (void (*)(unsigned int))filter_reset;
-//    lpf_iL_pv.reset(&lpf_iL_pv);
+    // const. low pass filter 2 khz
+    lpf_iL_pv.a1 = -1.1429805;
+    lpf_iL_pv.a2 = 0.4128016;
+    lpf_iL_pv.a3 = 0;
+    lpf_iL_pv.b0 = 0.06745527;
+    lpf_iL_pv.b1 = 0.13491055;
+    lpf_iL_pv.b2 = 0.06745527;
+    lpf_iL_pv.b3 = 0;
+    lpf_iL_pv.calc = (void (*)(unsigned int))filter_calc;
+    lpf_iL_pv.reset = (void (*)(unsigned int))filter_reset;
+    lpf_iL_pv.reset(&lpf_iL_pv);
 
 
-//    lpf_iL_pv.a1 = -0.9991277; // TODO: waner wodson gains
-//    lpf_iL_pv.a2 = 0;
-//    lpf_iL_pv.a3 = 0;
-//    lpf_iL_pv.b0 = 0.436142E-3;
-//    lpf_iL_pv.b1 = 0.436142E-3;
-//    lpf_iL_pv.b2 = 0;
-//    lpf_iL_pv.b3 = 0;
-//
-//
-//    // const. low pass filter 2 khz
-//    lpf_v_pv.a1 = -1.5645;
-//    lpf_v_pv.a2 = 0.6437;
-//    lpf_v_pv.a3 = 0;
-//    lpf_v_pv.b0 = 0.0198;
-//    lpf_v_pv.b1 = 0.0396;
-//    lpf_v_pv.b2 = 0.0198;
-//    lpf_v_pv.b3 = 0;
-//    lpf_v_pv.calc = (void (*)(unsigned int))filter_calc;
-//    lpf_v_pv.reset = (void (*)(unsigned int))filter_reset;
-//    lpf_v_pv.reset(&lpf_v_pv);
-//
-//
-//    lpf_v_pv.a1 = -0.9991277; // TODO: waner wodson gains
-//    lpf_v_pv.a2 = 0;
-//    lpf_v_pv.a3 = 0;
-//    lpf_v_pv.b0 = 0.436142E-3;
-//    lpf_v_pv.b1 = 0.436142E-3;
-//    lpf_v_pv.b2 = 0;
-//    lpf_v_pv.b3 = 0;
-//
-//    // const. low pass filter 2 khz
-//    lpf_v_sc.a1 = -1.5645;
-//    lpf_v_sc.a2 = 0.6437;
-//    lpf_v_sc.a3 = 0;
-//    lpf_v_sc.b0 = 0.0198;
-//    lpf_v_sc.b1 = 0.0396;
-//    lpf_v_sc.b2 = 0.0198;
-//    lpf_v_sc.b3 = 0;
-//    lpf_v_sc.calc = (void (*)(unsigned int))filter_calc;
-//    lpf_v_sc.reset = (void (*)(unsigned int))filter_reset;
-//    lpf_v_sc.reset(&lpf_v_sc);
-//
-//    // const. low pass filter 2 khz
-//    lpf_iL_sc.a1 = -1.5645;
-//    lpf_iL_sc.a2 = 0.6437;
-//    lpf_iL_sc.a3 = 0;
-//    lpf_iL_sc.b0 = 0.0198;
-//    lpf_iL_sc.b1 = 0.0396;
-//    lpf_iL_sc.b2 = 0.0198;
-//    lpf_iL_sc.b3 = 0;
-//    lpf_iL_sc.calc = (void (*)(unsigned int))filter_calc;
-//    lpf_iL_sc.reset = (void (*)(unsigned int))filter_reset;
-//    lpf_iL_sc.reset(&lpf_iL_sc);
+    // const. low pass filter 2 khz
+    lpf_v_pv.a1 = -1.1429805;
+    lpf_v_pv.a2 = 0.4128016;
+    lpf_v_pv.a3 = 0;
+    lpf_v_pv.b0 = 0.06745527;
+    lpf_v_pv.b1 = 0.13491055;
+    lpf_v_pv.b2 = 0.06745527;
+    lpf_v_pv.b3 = 0;
+    lpf_v_pv.calc = (void (*)(unsigned int))filter_calc;
+    lpf_v_pv.reset = (void (*)(unsigned int))filter_reset;
+    lpf_v_pv.reset(&lpf_v_pv);
+
+
+    // const. low pass filter 2 khz
+    lpf_v_sc.a1 = -1.1429805;
+    lpf_v_sc.a2 = 0.4128016;
+    lpf_v_sc.a3 = 0;
+    lpf_v_sc.b0 = 0.06745527;
+    lpf_v_sc.b1 = 0.13491055;
+    lpf_v_sc.b2 = 0.06745527;
+    lpf_v_sc.b3 = 0;
+    lpf_v_sc.calc = (void (*)(unsigned int))filter_calc;
+    lpf_v_sc.reset = (void (*)(unsigned int))filter_reset;
+    lpf_v_sc.reset(&lpf_v_sc);
+
+    // const. low pass filter 2 khz
+    lpf_iL_sc.a1 = -1.1429805;
+    lpf_iL_sc.a2 = 0.4128016;
+    lpf_iL_sc.a3 = 0;
+    lpf_iL_sc.b0 = 0.06745527;
+    lpf_iL_sc.b1 = 0.13491055;
+    lpf_iL_sc.b2 = 0.06745527;
+    lpf_iL_sc.b3 = 0;
+    lpf_iL_sc.calc = (void (*)(unsigned int))filter_calc;
+    lpf_iL_sc.reset = (void (*)(unsigned int))filter_reset;
+    lpf_iL_sc.reset(&lpf_iL_sc);
+
+    // const. low pass filter 2 khz
+    lpf_iL_bat.a1 = -1.1429805;
+    lpf_iL_bat.a2 = 0.4128016;
+    lpf_iL_bat.a3 = 0;
+    lpf_iL_bat.b0 = 0.06745527;
+    lpf_iL_bat.b1 = 0.13491055;
+    lpf_iL_bat.b2 = 0.06745527;
+    lpf_iL_bat.b3 = 0;
+    lpf_iL_bat.calc = (void (*)(unsigned int))filter_calc;
+    lpf_iL_bat.reset = (void (*)(unsigned int))filter_reset;
+    lpf_iL_bat.reset(&lpf_iL_bat);
+
+    // const. low pass filter 2 khz
+    lpf_v_cc.a1 = -1.1429805;
+    lpf_v_cc.a2 = 0.4128016;
+    lpf_v_cc.a3 = 0;
+    lpf_v_cc.b0 = 0.06745527;
+    lpf_v_cc.b1 = 0.13491055;
+    lpf_v_cc.b2 = 0.06745527;
+    lpf_v_cc.b3 = 0;
+    lpf_v_cc.calc = (void (*)(unsigned int))filter_calc;
+    lpf_v_cc.reset = (void (*)(unsigned int))filter_reset;
+    lpf_v_cc.reset(&lpf_v_cc);
 
 
 
@@ -264,7 +279,8 @@ int main(void)
     C_PV_iL.calc = (void (*)(unsigned int))pi_reg1_calc;
     C_PV_iL.reset = (void (*)(unsigned int))pi_reg1_reset;
 
-    C_PV_voltage.Kp = 0.1131;//0.005655;
+    //C_PV_voltage.Kp = 0.1131;//0.005655;
+    C_PV_voltage.Kp = 0.01131;//0.005655;
     C_PV_voltage.Ki = 3.1416;//0.015708;
     C_PV_voltage.OutMax = 0.9;
     C_PV_voltage.OutMin = 0.1;
@@ -274,8 +290,10 @@ int main(void)
     C_PV_voltage.calc = (void (*)(unsigned int))pi_reg1_calc;
     C_PV_voltage.reset = (void (*)(unsigned int))pi_reg1_reset;
 
-    C_SC.Kp = 0.38282;//0.1413;
-    C_SC.Ki = 140.3269;//31.08;
+    //C_SC.Kp = 0.38282;//0.1413;
+    C_SC.Kp = 0.038282;//0.1413;
+    //C_SC.Ki = 140.3269;//31.08;
+    C_SC.Ki = 14.03269;//31.08;
     C_SC.OutMax = 0.99;
     C_SC.OutMin = -0.99;
     C_SC.UiMax = 30.0;
@@ -284,12 +302,14 @@ int main(void)
     C_SC.calc = (void (*)(unsigned int))pi_reg1_calc;
     C_SC.reset = (void (*)(unsigned int))pi_reg1_reset;
 
-    C_BAT.Kp = 0.05026;
-    C_BAT.Ki = 11.05;
+    //C_BAT.Kp = 0.05026;
+    C_BAT.Kp = 0.005026;
+    //C_BAT.Ki = 11.05;
+    C_BAT.Ki = 0.1105;
     C_BAT.OutMax = 0.99;
     C_BAT.OutMin = -0.99;
-    C_BAT.UiMax = 30.0;
-    C_BAT.UiMin = -30.0;
+    C_BAT.UiMax = 50.0;
+    C_BAT.UiMin = -50.0;
     C_BAT.Ts = ISR_PERIOD;//0.000025;
     C_BAT.calc = (void (*)(unsigned int))pi_reg1_calc;
     C_BAT.reset = (void (*)(unsigned int))pi_reg1_reset;
@@ -385,8 +405,8 @@ int main(void)
             //fis_counter = 0;
 
             // divide FIS_output into MSB and LSB to send
-            buffer_tx[0] = ( ( ((int)(FIS_output*100.0)) & 0xFF00 ) >> 8 );
-            buffer_tx[1] = ( ((int)(FIS_output*100.0)) & 0x00FF );
+            buffer_tx[0] = ( ( ((int)(FIS_output*10.0)) & 0xFF00 ) >> 8 );
+            buffer_tx[1] = ( ((int)(FIS_output*10.0)) & 0x00FF );
 
             // divide MAsumVecPointer into MSB and LSB to send
             //buffer_tx[0] = ( ( ((int)(MAsumVecPointer)) & 0xFF00 ) >> 8 );
@@ -456,9 +476,15 @@ __interrupt void isr_adc(void){
     v_pcc[1] = adcinA1*0.1893 -370.6125; // 75 V per 1Vdac
     v_pcc[2] = adcinA2*0.1888 -376.1103; // 75 V per 1Vdac
 
-    v_pv = adcinA3*0.2467 -500.1273; // 100 V per 1Vdac
+    //v_pv = adcinA3*0.2467 -500.1273; // 100 V per 1Vdac
+    v_pv = adcinA3*0.2465 -498.0123; // 100 V per 1Vdac
 
-    Vcc[0] = adcinA5*0.2465 -500.0216; // 100 V per 1Vdac
+    //Vcc[0] = adcinA5*0.2465 -500.0216; // 100 V per 1Vdac
+    //Vcc[0] = adcinA5*0.2478 -501.2637; // 100 V per 1Vdac
+    lpf_v_cc.x0 = adcinA5*0.2478 -501.2637; // 100 V per 1Vdac
+    lpf_v_cc.calc(&lpf_v_cc);
+    Vcc[0] = lpf_v_cc.y0;
+
 //    Bus_Volt_notch.In = Vcc[0];
 //    NOTCH_FLTR_F_run(&Bus_Volt_notch, &notch_TwiceGridFreq);
 //    Vcc[1] = Bus_Volt_notch.Out;
@@ -470,15 +496,28 @@ __interrupt void isr_adc(void){
 
     iL_pv = adcinB3*0.0367 -75.6124; // 15 A per 1Vdac
 
-    v_pv_new = v_pv;
-    iLdc_new = iL_pv;
+    lpf_iL_pv.x0 = iL_pv;
+    lpf_iL_pv.calc(&lpf_iL_pv);
+    iLdc_new = lpf_iL_pv.y0;
 
-    v_sc = adcinA4*0.1851 -376.2359;
+    lpf_v_pv.x0 = v_pv;
+    lpf_v_pv.calc(&lpf_v_pv);
+    v_pv_new = lpf_v_pv.y0;
+
+    v_sc = adcinA4*0.1855 -375.0551;
     iLsc = adcinB4*0.0365 -75.2128;
 
-    v_sc_new = v_sc;
-    iLsc_new = iLsc;
-    iLbat_new = adcinB5*0.0367 -75.3759;
+    lpf_v_sc.x0 = v_sc;
+    lpf_v_sc.calc(&lpf_v_sc);
+    v_sc_new = lpf_v_sc.y0;
+
+    lpf_iL_sc.x0 = iLsc;
+    lpf_iL_sc.calc(&lpf_iL_sc);
+    iLsc_new = lpf_iL_sc.y0;
+
+    lpf_iL_bat.x0 = adcinB5*0.0367 -75.3759;
+    lpf_iL_bat.calc(&lpf_iL_bat);
+    iLbat_new = lpf_iL_bat.y0;
 
     maq_estados_inv();
 
