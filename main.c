@@ -385,12 +385,12 @@ int main(void)
             //fis_counter = 0;
 
             // divide FIS_output into MSB and LSB to send
-            buffer_tx[0] = (int)(FIS_output*10.0);
-            //buffer_tx[1] = ( ((int)(FIS_output*100.0)) & 0x00FF );
+            buffer_tx[0] = ( ( ((int)(FIS_output*100.0)) & 0xFF00 ) >> 8 );
+            buffer_tx[1] = ( ((int)(FIS_output*100.0)) & 0x00FF );
 
             // divide MAsumVecPointer into MSB and LSB to send
             //buffer_tx[0] = ( ( ((int)(MAsumVecPointer)) & 0xFF00 ) >> 8 );
-            buffer_tx[1] = (int)(MAsumVecPointer);
+            //buffer_tx[1] = (int)(MAsumVecPointer);
 
 
 

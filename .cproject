@@ -44,10 +44,10 @@
 									<listOptionValue builtIn="false" value="C:\ti\controlSUITE\libs\app_libs\solar\v1.2"/>
 									<listOptionValue builtIn="false" value="C:\ti\controlSUITE\libs\app_libs\solar\v1.2\float\include"/>
 									<listOptionValue builtIn="false" value="C:\ti\controlSUITE\libs\app_libs\solar\v1.2\float\source"/>
-									<listOptionValue builtIn="false" value="C:\ti\c2000\C2000Ware_5_00_00_00\device_support\f2837xd\headers\source"/>
-									<listOptionValue builtIn="false" value="C:\ti\c2000\C2000Ware_5_00_00_00\device_support\f2837xd\headers\include"/>
-									<listOptionValue builtIn="false" value="C:\ti\c2000\C2000Ware_5_00_00_00\device_support\f2837xd\common\source"/>
-									<listOptionValue builtIn="false" value="C:\ti\c2000\C2000Ware_5_00_00_00\device_support\f2837xd\common\include"/>
+									<listOptionValue builtIn="false" value="C:\ti\c2000\C2000Ware_5_04_00_00\device_support\f2837xd\headers\source"/>
+									<listOptionValue builtIn="false" value="C:\ti\c2000\C2000Ware_5_04_00_00\device_support\f2837xd\headers\include"/>
+									<listOptionValue builtIn="false" value="C:\ti\c2000\C2000Ware_5_04_00_00\device_support\f2837xd\common\source"/>
+									<listOptionValue builtIn="false" value="C:\ti\c2000\C2000Ware_5_04_00_00\device_support\f2837xd\common\include"/>
 									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/application}"/>
 									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/application/fis}"/>
 									<listOptionValue builtIn="false" value="${CG_TOOL_ROOT}/include"/>
