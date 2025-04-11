@@ -64,9 +64,7 @@ extern int comando_ligar;
 
 MPPTstates_t estado_MPPT_atual = MPPT_OFF;
 MPPTstates_t estado_MPPT_anterior = MPPT_OFF;
-extern float p_pv_new;
-extern float iLdc_new;
-extern float v_pv_new;
+
 
 float v_pv_ref_FORCED = 0;
 int boost_enable = 0;
@@ -82,6 +80,7 @@ extern float FIS_output;
 
 
 // mppt variables
+extern float iLdc_new;
 float p_pv_old = 0;     // PV power [n-1]
 extern float p_pv_new;     // PV power [n]
 extern float v_pv;         // PV voltage [n]
@@ -141,7 +140,8 @@ extern float std_dev;                   // standard deviation variable
 float sum_sq_diff = 0.0;                // sum for std_dev
 
 
-uint16_t MAsize[MA_POINTS] = {100, 200, 300, 400, 500, 600, 700, 800, 900, 1200};
+uint16_t MAsize[MA_POINTS] = {1, 200, 300, 400, 500, 600, 700, 800, 900, 1200};
+//uint16_t MAsize[MA_POINTS] = {200, 200, 200, 200, 200, 200, 200, 200, 200, 200};
 float MAsumVec[MA_POINTS] = {0.0};      // array of sum of points to the Moving Average
 extern uint16_t MAsumVecPointer;        // pointer to the current MAsumVec position
 uint16_t MAsumVecpreviousPointer = 0;   // pointer to the previous MAsumVec position
@@ -305,7 +305,7 @@ void moving_average(){
 
                 MpPointer = (VARPointer < MA_CURRENT) ? (MAX_PERIOD-(MA_CURRENT-VARPointer)) : (VARPointer-MA_CURRENT);
                 update_MAsumVec();
-                AvgPower = MAsumVec[2]/MAsize[2]; // current M.A
+                AvgPower = MAsumVec[0]/MAsize[0]; // current M.A
 
                 VAR_sum += p_pv_new;
                 AvgPowerVAR = VAR_sum/MpCount;
@@ -367,7 +367,8 @@ void controle_bidirecional_sc(float duty_cycle, int enable){
         else if(duty_bid_sc < 0) duty_bid_sc = 0;
     }
 
-    if(enable){
+    if(enable && (MAsumVecPointer > 0)){
+    //if(enable){
         GPIO_WritePin(13, 1);
 
         EPwm5Regs.CMPA.bit.CMPA = (uint16_t)(duty_bid_sc *((float)EPwm5Regs.TBPRD));
@@ -403,7 +404,8 @@ void controle_bidirecional_bat(float duty_cycle, int enable){
         else if(duty_bid_bat < 0) duty_bid_bat = 0;
     }
 
-    if(enable){
+    if(enable && (MAsumVecPointer > 0)){
+    //if(enable){
         GPIO_WritePin(13, 1);
 
         EPwm6Regs.CMPA.bit.CMPA = (uint16_t)(duty_bid_bat *((float)EPwm6Regs.TBPRD));
