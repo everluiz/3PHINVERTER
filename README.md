@@ -13,3 +13,6 @@ Typhoon files:
   - Typhoon schematic: PV3phGrid_uc.tse
   - SCADA model: pv3phGrid_panel.cus
   - SCADA model settings: pv3phGrid_uc_model.runx
+ 
+  Code Composer Studio
+ Version: 10.4.0.00006 
