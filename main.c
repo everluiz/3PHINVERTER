@@ -414,7 +414,7 @@ int main(void)
 
 
 
-            fis_EMS3inputs_run((float[]){HESS_power_ref, SoC_est, v_sc}, &FIS_output);            // leva entre 10ms a 30ms para calcular a FIS
+            fis_EMS3inputs_run((float[]){HESS_power_ref, SoC_est, v_sc_new}, &FIS_output);  // leva entre 10ms a 30ms para calcular a FIS
 
             #if DEBUG
             FIS_plot[FIS_plot_counter] = FIS_output;
