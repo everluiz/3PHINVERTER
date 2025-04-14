@@ -140,7 +140,7 @@ extern float std_dev;                   // standard deviation variable
 float sum_sq_diff = 0.0;                // sum for std_dev
 
 
-uint16_t MAsize[MA_POINTS] = {1, 200, 300, 400, 500, 600, 700, 800, 900, 1200};
+uint16_t MAsize[MA_POINTS] = {1, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1200};
 //uint16_t MAsize[MA_POINTS] = {200, 200, 200, 200, 200, 200, 200, 200, 200, 200};
 float MAsumVec[MA_POINTS] = {0.0};      // array of sum of points to the Moving Average
 extern uint16_t MAsumVecPointer;        // pointer to the current MAsumVec position
@@ -243,7 +243,7 @@ void controle_boost_paineisPV(float v_pv_ref, int enable){
  *   100 - 150 - 200 - 250 - 300 - 400 - 600 - 800 - 900 - 1000
  */
 void update_MAwindow(){
-    static const uint16_t thresholds[] = {100, 150, 200, 250, 300, 400, 600, 800, 900, 1000};
+    static const uint16_t thresholds[] = {50, 100, 150, 200, 250, 300, 400, 600, 800, 900, 1000};
     static const uint16_t hysteresis = 10; // Hysteresis margin
 
     MAsumVecPointer = 0; // Default value if std_dev is below the first threshold

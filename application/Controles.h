@@ -35,7 +35,7 @@
 #define MA_CURRENT              200                                      // tamanho do vetor de pontos da media movel
 #define MAX_PERIOD              1200                                     // 600 seconds
 #define MIN_PERIOD              120                                      // 60 seconds
-#define MA_POINTS               10
+#define MA_POINTS               11
 #define THRESHOLDS              MA_POINTS-1
 
 #define tempo_atingido          CpuTimer0Regs.TCR.bit.TIF
