@@ -292,7 +292,7 @@ void moving_average(){
 
         if(MpCount <= MA_CURRENT){ // loading the Power array (first interaction)
             update_MAsumVec();
-            AvgPower = MAsumVec[2]/MpCount;
+            AvgPower = MAsumVec[1]/MpCount;
             MpCount++;
 
             VAR_sum += p_pv_new;
