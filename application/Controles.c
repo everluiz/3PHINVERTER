@@ -68,7 +68,7 @@ MPPTstates_t estado_MPPT_anterior = MPPT_OFF;
 
 float v_pv_ref_FORCED = 0;
 int boost_enable = 0;
-int SC_enable = 0;
+int HESS_enable = 0;
 float sc_duty_cycle_FORCED = 0.0;
 float BAT_duty_cycle_FORCED = 0.0;
 //float iLdc = 0;        // current boost
@@ -366,14 +366,13 @@ void controle_bidirecional_sc(float duty_cycle, int enable){
         else if(duty_bid_sc < 0) duty_bid_sc = 0;
     }
 
-    if(enable && (MAsumVecPointer > 0) && ((fabs(iLsc_ref) > 0) || (fabs(iLbat_ref) > 0) )){
+    if(enable && (MAsumVecPointer > 0) && (fabs(iLsc_ref) > 0) ){
     //if(enable){
-        GPIO_WritePin(13, 1);
-
         EPwm5Regs.CMPA.bit.CMPA = (uint16_t)(duty_bid_sc *((float)EPwm5Regs.TBPRD));
+        EPwm5Regs.TZCLR.bit.OST = 1;            // Clear one-shot Trip (resume pwm)
     }else{
+        EPwm5Regs.TZFRC.bit.OST = 1;             // Force one-shot Trip zone event manually
         C_SC.reset(C_SC);
-        GPIO_WritePin(13, 0);                    // Set GPIO pin low (disable IGBT)
     }
 }
 
@@ -403,14 +402,13 @@ void controle_bidirecional_bat(float duty_cycle, int enable){
         else if(duty_bid_bat < 0) duty_bid_bat = 0;
     }
 
-    if(enable && (MAsumVecPointer > 0) && ((fabs(iLsc_ref) > 0) || (fabs(iLbat_ref) > 0) )){
+    if(enable && (MAsumVecPointer > 0) && (fabs(iLbat_ref) > 0) ){
     //if(enable){
-        GPIO_WritePin(13, 1);
-
         EPwm6Regs.CMPA.bit.CMPA = (uint16_t)(duty_bid_bat *((float)EPwm6Regs.TBPRD));
+        EPwm6Regs.TZCLR.bit.OST = 1;            // Clear one-shot Trip (resume pwm)
     }else{
-        C_BAT.reset(C_BAT);
-        GPIO_WritePin(13, 0);                    // Set GPIO pin low (disable IGBT)
+        EPwm6Regs.TZFRC.bit.OST = 1;             // Force one-shot Trip zone event manually
+        C_SC.reset(C_BAT);
     }
 }
 /* Function: estimador_SoC
@@ -757,10 +755,16 @@ void maq_estados_inv()
                 moving_average();
                 //gera_referencia();
                 gera_referencia_HESS();
-                //SC_enable = 1;
-                controle_bidirecional_sc(sc_duty_cycle_FORCED, SC_enable);
+
+                if(HESS_enable){
+                    GPIO_WritePin(13, 1);
+                }else{
+                    GPIO_WritePin(13, 0);
+                }
+
+                controle_bidirecional_sc(sc_duty_cycle_FORCED, HESS_enable);
                 estimador_SoC();
-                controle_bidirecional_bat(BAT_duty_cycle_FORCED, SC_enable);
+                controle_bidirecional_bat(BAT_duty_cycle_FORCED, HESS_enable);
 
                 break;
     }
