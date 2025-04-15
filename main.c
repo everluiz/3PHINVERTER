@@ -504,7 +504,7 @@ __interrupt void isr_adc(void){
     lpf_v_pv.calc(&lpf_v_pv);
     v_pv_new = lpf_v_pv.y0;
 
-    v_sc = adcinA4*0.1855 -375.0551;
+    v_sc = adcinA4*0.0993 -1.0849;
     iLsc = adcinB4*0.0365 -75.2128;
 
     lpf_v_sc.x0 = v_sc;

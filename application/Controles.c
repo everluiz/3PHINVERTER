@@ -110,7 +110,6 @@ extern float ESS_power_ref;
 extern float HESS_power_ref;
 float SC_power_ref = 0.0;               // power reference for the SC
 float BAT_power_ref = 0.0;              // power reference for the Battery
-extern float FIS_output;
 
 // control variables
 extern PIREG1 C_PV_iL;                  // PV boost current controller
@@ -140,8 +139,8 @@ extern float std_dev;                   // standard deviation variable
 float sum_sq_diff = 0.0;                // sum for std_dev
 
 
-uint16_t MAsize[MA_POINTS] = {1, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1200};
-//uint16_t MAsize[MA_POINTS] = {200, 200, 200, 200, 200, 200, 200, 200, 200, 200};
+//uint16_t MAsize[MA_POINTS] = {1,  100, 200, 300, 400, 500, 600, 700, 800, 900, 1200};
+uint16_t MAsize[MA_POINTS] = {200,200, 200, 200, 200, 200, 200, 200, 200, 200, 200};
 float MAsumVec[MA_POINTS] = {0.0};      // array of sum of points to the Moving Average
 extern uint16_t MAsumVecPointer;        // pointer to the current MAsumVec position
 uint16_t MAsumVecpreviousPointer = 0;   // pointer to the previous MAsumVec position
@@ -367,7 +366,7 @@ void controle_bidirecional_sc(float duty_cycle, int enable){
         else if(duty_bid_sc < 0) duty_bid_sc = 0;
     }
 
-    if(enable && (MAsumVecPointer > 0)){
+    if(enable && (MAsumVecPointer > 0) && ((fabs(iLsc_ref) > 0) || (fabs(iLbat_ref) > 0) )){
     //if(enable){
         GPIO_WritePin(13, 1);
 
@@ -404,7 +403,7 @@ void controle_bidirecional_bat(float duty_cycle, int enable){
         else if(duty_bid_bat < 0) duty_bid_bat = 0;
     }
 
-    if(enable && (MAsumVecPointer > 0)){
+    if(enable && (MAsumVecPointer > 0) && ((fabs(iLsc_ref) > 0) || (fabs(iLbat_ref) > 0) )){
     //if(enable){
         GPIO_WritePin(13, 1);
 
