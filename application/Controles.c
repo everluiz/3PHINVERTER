@@ -139,8 +139,8 @@ extern float std_dev;                   // standard deviation variable
 float sum_sq_diff = 0.0;                // sum for std_dev
 
 
-//uint16_t MAsize[MA_POINTS] = {1,  100, 200, 300, 400, 500, 600, 700, 800, 900, 1200};
-uint16_t MAsize[MA_POINTS] = {200,200, 200, 200, 200, 200, 200, 200, 200, 200, 200};
+uint16_t MAsize[MA_POINTS] = {1,  100, 200, 300, 400, 500, 600, 700, 800, 900, 1200};
+//uint16_t MAsize[MA_POINTS] = {200,200, 200, 200, 200, 200, 200, 200, 200, 200, 200};
 float MAsumVec[MA_POINTS] = {0.0};      // array of sum of points to the Moving Average
 extern uint16_t MAsumVecPointer;        // pointer to the current MAsumVec position
 uint16_t MAsumVecpreviousPointer = 0;   // pointer to the previous MAsumVec position
@@ -291,7 +291,7 @@ void moving_average(){
 
         if(MpCount <= MA_CURRENT){ // loading the Power array (first interaction)
             update_MAsumVec();
-            AvgPower = MAsumVec[1]/MpCount;
+            AvgPower = MAsumVec[2]/MpCount;
             MpCount++;
 
             VAR_sum += p_pv_new;
@@ -304,7 +304,7 @@ void moving_average(){
 
                 MpPointer = (VARPointer < MA_CURRENT) ? (MAX_PERIOD-(MA_CURRENT-VARPointer)) : (VARPointer-MA_CURRENT);
                 update_MAsumVec();
-                AvgPower = MAsumVec[0]/MAsize[0]; // current M.A
+                AvgPower = MAsumVec[2]/MAsize[2]; // current M.A
 
                 VAR_sum += p_pv_new;
                 AvgPowerVAR = VAR_sum/MpCount;
@@ -365,15 +365,21 @@ void controle_bidirecional_sc(float duty_cycle, int enable){
         if(duty_bid_sc > 0.99) duty_bid_sc = 0.99;
         else if(duty_bid_sc < 0) duty_bid_sc = 0;
     }
-
+    EALLOW;
     if(enable && (MAsumVecPointer > 0) && (fabs(iLsc_ref) > 0) ){
     //if(enable){
+        EPwm5Regs.AQSFRC.bit.ACTSFA = 0; // Optional: return control to AQ
+        EPwm5Regs.AQSFRC.bit.ACTSFB = 0;
+        //EPwm5Regs.TZCLR.bit.OST = 1;            // Clear one-shot Trip (resume pwm)
         EPwm5Regs.CMPA.bit.CMPA = (uint16_t)(duty_bid_sc *((float)EPwm5Regs.TBPRD));
         EPwm5Regs.TZCLR.bit.OST = 1;            // Clear one-shot Trip (resume pwm)
     }else{
+//        EPwm5Regs.TZCTL.bit.TZA = 0b10;  // Force EPWMxA low
+//        EPwm5Regs.TZCTL.bit.TZB = 0b10;  // Force EPWMxB low
         EPwm5Regs.TZFRC.bit.OST = 1;             // Force one-shot Trip zone event manually
         C_SC.reset(C_SC);
     }
+    EDIS;
 }
 
 /* Function: controle_bidirecional_bat
@@ -401,15 +407,20 @@ void controle_bidirecional_bat(float duty_cycle, int enable){
         if(duty_bid_bat > 0.99) duty_bid_bat = 0.99;
         else if(duty_bid_bat < 0) duty_bid_bat = 0;
     }
-
+    EALLOW;
     if(enable && (MAsumVecPointer > 0) && (fabs(iLbat_ref) > 0) ){
     //if(enable){
+        EPwm6Regs.AQSFRC.bit.ACTSFA = 0; // Optional: return control to AQ
+        EPwm6Regs.AQSFRC.bit.ACTSFB = 0;
         EPwm6Regs.CMPA.bit.CMPA = (uint16_t)(duty_bid_bat *((float)EPwm6Regs.TBPRD));
         EPwm6Regs.TZCLR.bit.OST = 1;            // Clear one-shot Trip (resume pwm)
     }else{
+//        EPwm6Regs.TZCTL.bit.TZA = 0b10;  // Force EPWMxA low
+//        EPwm6Regs.TZCTL.bit.TZB = 0b10;  // Force EPWMxB low
         EPwm6Regs.TZFRC.bit.OST = 1;             // Force one-shot Trip zone event manually
         C_SC.reset(C_BAT);
     }
+    EDIS;
 }
 /* Function: estimador_SoC
  * ---------------------------------------------------------
@@ -465,7 +476,7 @@ void gera_referencia_HESS(){
     if (fabs(FIS_output) > 2.3) {
         SC_power_ref = 0;
         BAT_power_ref = HESS_power_ref;
-    } else if (fabs(FIS_output) > 0.3 && fabs(FIS_output) < 1.3) {
+    } else if (fabs(FIS_output) > 0.3 && fabs(FIS_output) <= 1.3) {
         SC_power_ref = HESS_power_ref;
         BAT_power_ref = 0;
     } else if (fabs(FIS_output) <= 0.3) {

@@ -67,19 +67,29 @@ static const qFIS_Rules_t rules[] = {
 };
 /* Rule strengths */
 float rStrength[ 41 ] = { 0.0f };
+/* Rule weighs */
+static float ruleWeights[] = { 1.00f, 1.00f, 1.00f, 1.00f, 0.50f, 0.50f, 1.00f, 1.00f, 1.00f, 1.00f, 1.00f, 1.00f, 1.00f, 1.00f, 1.00f, 0.50f, 1.00f, 1.00f, 1.00f, 1.00f, 1.00f, 1.00f, 1.00f, 1.00f, 1.00f, 0.50f, 1.00f, 1.00f, 1.00f, 1.00f, 1.00f, 1.00f, 1.00f, 1.00f, 1.00f, 0.50f, 0.50f, 1.00f, 1.00f, 1.00f, 1.00f };
+
 
 /* Parameters of the membership functions */
-static const float power_reference_Med_Deficit_p[] = { -0.0025f, -4000.0000f };
+//static const float power_reference_Med_Deficit_p[] = { -0.0025f, -4000.0000f };
+static const float power_reference_Med_Deficit_p[] = { -9000.0000f, -9000.0000f, -5000.0000f, -2000.0000f };
 static const float power_reference_Low_Deficit_p[] = { -2500.0000f, -1500.0000f, -20.0000f };
 static const float power_reference_Low_Surplus_p[] = { 20.0000f, 1500.0000f, 2500.0000f };
-static const float power_reference_Med_Surplus_p[] = { 0.0025f, 4000.0000f };
+//static const float power_reference_Med_Surplus_p[] = { 0.0025f, 4000.0000f };
+static const float power_reference_Med_Surplus_p[] = { 2000.0000f, 5000.0000f, 9000.0000f, 9000.0000f };
 static const float power_reference_Balanced_p[] = { -25.0000f, 0.0000f, 25.0000f };
 static const float SoC_low_p[] = { -1.7084f, 20.0000f };
 static const float SoC_medium_p[] = { 20.0000f, 55.0000f, 90.0000f };
 static const float SoC_high_p[] = { 1.3456f, 90.0000f };
-static const float V_sc_low_p[] = { -0.5731f, 200.0000f };
-static const float V_sc_medium_p[] = { 205.0000f, 240.0000f, 310.0000f };
-static const float V_sc_high_p[] = { 0.2461f, 320.0000f };
+
+//static const float V_sc_low_p[] = { -0.5731f, 200.0000f };
+static const float V_sc_low_p[] = { -0.0630f, 150.0000f };
+//static const float V_sc_medium_p[] = { 205.0000f, 240.0000f, 310.0000f };
+static const float V_sc_medium_p[] = { 18.2253f, 250.0000f };
+//static const float V_sc_high_p[] = { 0.2461f, 320.0000f };
+static const float V_sc_high_p[] = { 0.0983f, 320.0000f };
+
 static const float P_ref_command_charge_SC_p[] = { 0.3000f, 0.6000f, 1.3000f, 2.3000f };
 static const float P_ref_command_discharge_SC_p[] = { -2.3000f, -1.3000f, -0.6000f, -0.3000f };
 static const float P_ref_command_off_p[] = { -0.3000f, 0.0000f, 0.3000f };
@@ -94,16 +104,21 @@ void fis_EMS3inputs_init( void ){
     /* Set outputs */
     qFIS_OutputSetup( fis_EMS3inputs_outputs, P_ref_command, -3.3000f, 3.3000f );
     /* Set membership functions for the inputs */
-    qFIS_SetMF( MFin, power_reference, power_reference_Med_Deficit, sigmf, NULL, power_reference_Med_Deficit_p, 1.0f );
+//    qFIS_SetMF( MFin, power_reference, power_reference_Med_Deficit, sigmf, NULL, power_reference_Med_Deficit_p, 1.0f );
+    qFIS_SetMF( MFin, power_reference, power_reference_Med_Deficit, trapmf, NULL, power_reference_Med_Deficit_p, 1.0f );
     qFIS_SetMF( MFin, power_reference, power_reference_Low_Deficit, trimf, NULL, power_reference_Low_Deficit_p, 1.0f );
     qFIS_SetMF( MFin, power_reference, power_reference_Low_Surplus, trimf, NULL, power_reference_Low_Surplus_p, 1.0f );
-    qFIS_SetMF( MFin, power_reference, power_reference_Med_Surplus, sigmf, NULL, power_reference_Med_Surplus_p, 1.0f );
+//    qFIS_SetMF( MFin, power_reference, power_reference_Med_Surplus, sigmf, NULL, power_reference_Med_Surplus_p, 1.0f );
+    qFIS_SetMF( MFin, power_reference, power_reference_Med_Surplus, trapmf, NULL, power_reference_Med_Surplus_p, 1.0f );
     qFIS_SetMF( MFin, power_reference, power_reference_Balanced, trimf, NULL, power_reference_Balanced_p, 1.0f );
     qFIS_SetMF( MFin, SoC, SoC_low, sigmf, NULL, SoC_low_p, 1.0f );
     qFIS_SetMF( MFin, SoC, SoC_medium, trimf, NULL, SoC_medium_p, 1.0f );
     qFIS_SetMF( MFin, SoC, SoC_high, sigmf, NULL, SoC_high_p, 1.0f );
+//    qFIS_SetMF( MFin, V_sc, V_sc_low, sigmf, NULL, V_sc_low_p, 1.0f );
+//    qFIS_SetMF( MFin, V_sc, V_sc_medium, trimf, NULL, V_sc_medium_p, 1.0f );
+//    qFIS_SetMF( MFin, V_sc, V_sc_high, sigmf, NULL, V_sc_high_p, 1.0f );
     qFIS_SetMF( MFin, V_sc, V_sc_low, sigmf, NULL, V_sc_low_p, 1.0f );
-    qFIS_SetMF( MFin, V_sc, V_sc_medium, trimf, NULL, V_sc_medium_p, 1.0f );
+    qFIS_SetMF( MFin, V_sc, V_sc_medium, gaussmf, NULL, V_sc_medium_p, 1.0f );
     qFIS_SetMF( MFin, V_sc, V_sc_high, sigmf, NULL, V_sc_high_p, 1.0f );
     /* Set membership functions for the outputs */
     qFIS_SetMF( MFout, P_ref_command, P_ref_command_charge_SC, trapmf, NULL, P_ref_command_charge_SC_p, 1.0f );
@@ -118,6 +133,7 @@ void fis_EMS3inputs_init( void ){
                 fis_EMS3inputs_outputs, sizeof(fis_EMS3inputs_outputs),
                 MFin, sizeof(MFin), MFout, sizeof(MFout),
                 rules, rStrength, 41u );
+    qFIS_SetRuleWeights( &fis_EMS3inputs, ruleWeights );
 }
 
 void fis_EMS3inputs_run( float *inputs, float *outputs ) {

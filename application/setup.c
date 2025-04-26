@@ -389,6 +389,10 @@ void setup_ePWM(void){
     EPwm5Regs.AQCTLA.bit.CAU = AQ_CLEAR;                  // clear when reaches CMP counting up
     EPwm5Regs.AQCTLA.bit.CAD = AQ_SET;                    // set when reaches CMP counting down
 
+    // configura trip zone
+    EPwm5Regs.TZCTL.bit.TZA = 0b10;  // Force EPWMxA low
+    EPwm5Regs.TZCTL.bit.TZB = 0b10;  // Force EPWMxB low
+
     //PWM complementar
     EPwm5Regs.DBCTL.bit.POLSEL = DB_ACTV_HIC;            // Active Hi complementary
     EPwm5Regs.DBCTL.bit.OUT_MODE = DB_FULL_ENABLE;       // enable Dead-band module
@@ -438,6 +442,10 @@ void setup_ePWM(void){
     EPwm6Regs.AQCTLA.bit.ZRO = AQ_NO_ACTION;              // no action when counter reaches ZERO
     EPwm6Regs.AQCTLA.bit.CAU = AQ_CLEAR;                  // clear when reaches CMP counting up
     EPwm6Regs.AQCTLA.bit.CAD = AQ_SET;                    // set when reaches CMP counting down
+
+    // configura trip zone
+    EPwm6Regs.TZCTL.bit.TZA = 0b10;  // Force EPWMxA low
+    EPwm6Regs.TZCTL.bit.TZB = 0b10;  // Force EPWMxB low
 
     //PWM complementar
     EPwm6Regs.DBCTL.bit.POLSEL = DB_ACTV_HIC;            // Active Hi complementary

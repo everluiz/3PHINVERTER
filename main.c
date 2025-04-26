@@ -105,6 +105,13 @@ filter lpf_iL_sc = filter_DEFAULTS;
 filter lpf_iL_bat = filter_DEFAULTS;
 filter lpf_v_cc = filter_DEFAULTS;
 
+filter lpf_va = filter_DEFAULTS;
+filter lpf_vb = filter_DEFAULTS;
+filter lpf_vc = filter_DEFAULTS;
+filter lpf_iLCL_a = filter_DEFAULTS;
+filter lpf_iLCL_b = filter_DEFAULTS;
+filter lpf_iLCL_c = filter_DEFAULTS;
+
 // control variables
 PIREG1 C_PV_iL = PIREG1_DEFAULTS;
 PIREG1 C_PV_voltage = PIREG1_DEFAULTS;
@@ -267,7 +274,78 @@ int main(void)
     lpf_v_cc.reset = (void (*)(unsigned int))filter_reset;
     lpf_v_cc.reset(&lpf_v_cc);
 
+    // const. low pass filter 2 khz
+    lpf_va.a1 = -1.1429805;
+    lpf_va.a2 = 0.4128016;
+    lpf_va.a3 = 0;
+    lpf_va.b0 = 0.06745527;
+    lpf_va.b1 = 0.13491055;
+    lpf_va.b2 = 0.06745527;
+    lpf_va.b3 = 0;
+    lpf_va.calc = (void (*)(unsigned int))filter_calc;
+    lpf_va.reset = (void (*)(unsigned int))filter_reset;
+    lpf_va.reset(&lpf_va);
 
+    // const. low pass filter 2 khz
+    lpf_vb.a1 = -1.1429805;
+    lpf_vb.a2 = 0.4128016;
+    lpf_vb.a3 = 0;
+    lpf_vb.b0 = 0.06745527;
+    lpf_vb.b1 = 0.13491055;
+    lpf_vb.b2 = 0.06745527;
+    lpf_vb.b3 = 0;
+    lpf_vb.calc = (void (*)(unsigned int))filter_calc;
+    lpf_vb.reset = (void (*)(unsigned int))filter_reset;
+    lpf_vb.reset(&lpf_vb);
+
+    // const. low pass filter 2 khz
+    lpf_vc.a1 = -1.1429805;
+    lpf_vc.a2 = 0.4128016;
+    lpf_vc.a3 = 0;
+    lpf_vc.b0 = 0.06745527;
+    lpf_vc.b1 = 0.13491055;
+    lpf_vc.b2 = 0.06745527;
+    lpf_vc.b3 = 0;
+    lpf_vc.calc = (void (*)(unsigned int))filter_calc;
+    lpf_vc.reset = (void (*)(unsigned int))filter_reset;
+    lpf_vc.reset(&lpf_vc);
+
+
+    // const. low pass filter 2 khz
+    lpf_iLCL_a.a1 = -1.1429805;
+    lpf_iLCL_a.a2 = 0.4128016;
+    lpf_iLCL_a.a3 = 0;
+    lpf_iLCL_a.b0 = 0.06745527;
+    lpf_iLCL_a.b1 = 0.13491055;
+    lpf_iLCL_a.b2 = 0.06745527;
+    lpf_iLCL_a.b3 = 0;
+    lpf_iLCL_a.calc = (void (*)(unsigned int))filter_calc;
+    lpf_iLCL_a.reset = (void (*)(unsigned int))filter_reset;
+    lpf_iLCL_a.reset(&lpf_iLCL_a);
+
+    // const. low pass filter 2 khz
+    lpf_iLCL_b.a1 = -1.1429805;
+    lpf_iLCL_b.a2 = 0.4128016;
+    lpf_iLCL_b.a3 = 0;
+    lpf_iLCL_b.b0 = 0.06745527;
+    lpf_iLCL_b.b1 = 0.13491055;
+    lpf_iLCL_b.b2 = 0.06745527;
+    lpf_iLCL_b.b3 = 0;
+    lpf_iLCL_b.calc = (void (*)(unsigned int))filter_calc;
+    lpf_iLCL_b.reset = (void (*)(unsigned int))filter_reset;
+    lpf_iLCL_b.reset(&lpf_iLCL_b);
+
+    // const. low pass filter 2 khz
+    lpf_iLCL_c.a1 = -1.1429805;
+    lpf_iLCL_c.a2 = 0.4128016;
+    lpf_iLCL_c.a3 = 0;
+    lpf_iLCL_c.b0 = 0.06745527;
+    lpf_iLCL_c.b1 = 0.13491055;
+    lpf_iLCL_c.b2 = 0.06745527;
+    lpf_iLCL_c.b3 = 0;
+    lpf_iLCL_c.calc = (void (*)(unsigned int))filter_calc;
+    lpf_iLCL_c.reset = (void (*)(unsigned int))filter_reset;
+    lpf_iLCL_c.reset(&lpf_iLCL_c);
 
     C_PV_iL.Kp = -0.055292;//-0.55292;
     C_PV_iL.Ki = -19.63121;//-196.3121;
@@ -472,9 +550,22 @@ __interrupt void isr_adc(void){
     adcinB5 = AdcbResultRegs.ADCRESULT5;           // (iL_Bat)
 
     // VOLTAGE CONVERSIONS
-    v_pcc[0] = adcinA0*0.1862 -376.71; // 75 V per 1Vdac
-    v_pcc[1] = adcinA1*0.1893 -370.6125; // 75 V per 1Vdac
-    v_pcc[2] = adcinA2*0.1888 -376.1103; // 75 V per 1Vdac
+//    v_pcc[0] = adcinA0*0.1862 -376.71; // 75 V per 1Vdac
+//    v_pcc[1] = adcinA1*0.1893 -370.6125; // 75 V per 1Vdac
+//    v_pcc[2] = adcinA2*0.1888 -376.1103; // 75 V per 1Vdac
+
+    lpf_va.x0 = adcinA0*0.1862 -376.71; // 75 V per 1Vdac
+    lpf_va.calc(&lpf_va);
+    v_pcc[0] = lpf_va.y0;
+
+    lpf_vb.x0 = adcinA1*0.1893 -370.6125; // 75 V per 1Vdac
+    lpf_vb.calc(&lpf_vb);
+    v_pcc[1] = lpf_vb.y0;
+
+    lpf_vc.x0 = adcinA2*0.1888 -376.1103; // 75 V per 1Vdac
+    lpf_vc.calc(&lpf_vc);
+    v_pcc[2] = lpf_vc.y0;
+
 
     //v_pv = adcinA3*0.2467 -500.1273; // 100 V per 1Vdac
     v_pv = adcinA3*0.2465 -498.0123; // 100 V per 1Vdac
@@ -490,9 +581,21 @@ __interrupt void isr_adc(void){
 //    Vcc[1] = Bus_Volt_notch.Out;
 
     // CURRENT CONVERSIONS
-    i_pcc[0] = adcinB0*0.0368 -74.8002; // 15 A per 1Vdac
-    i_pcc[1] = adcinB1*0.0370 -74.7438; // 15 A per 1Vdac
-    i_pcc[2] = adcinB2*0.0365 -74.6188; // 15 A per 1Vdac
+    //i_pcc[0] = adcinB0*0.0368 -74.8002; // 15 A per 1Vdac
+    //i_pcc[1] = adcinB1*0.0370 -74.7438; // 15 A per 1Vdac
+    //i_pcc[2] = adcinB2*0.0365 -74.6188; // 15 A per 1Vdac
+
+    lpf_iLCL_a.x0 = adcinB0*0.0368 -74.8002; // 15 A per 1Vdac
+    lpf_iLCL_a.calc(&lpf_iLCL_a);
+    i_pcc[0] = lpf_iLCL_a.y0;
+
+    lpf_iLCL_b.x0 = adcinB1*0.0370 -74.7438; // 15 A per 1Vdac
+    lpf_iLCL_b.calc(&lpf_iLCL_b);
+    i_pcc[1] = lpf_iLCL_b.y0;
+
+    lpf_iLCL_c.x0 = adcinB2*0.0365 -74.6188; // 15 A per 1Vdac
+    lpf_iLCL_c.calc(&lpf_iLCL_c);
+    i_pcc[2] = lpf_iLCL_c.y0;
 
     iL_pv = adcinB3*0.0367 -75.6124; // 15 A per 1Vdac
 
