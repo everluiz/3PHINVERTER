@@ -366,7 +366,7 @@ void controle_bidirecional_sc(float duty_cycle, int enable){
         else if(duty_bid_sc < 0) duty_bid_sc = 0;
     }
     EALLOW;
-    if(enable && (MAsumVecPointer > 0) && (fabs(iLsc_ref) > 0) ){
+    if(enable && (MAsumVecPointer > 0) && (fabs(iLsc_ref) > 0.1) ){
     //if(enable){
         EPwm5Regs.AQSFRC.bit.ACTSFA = 0; // Optional: return control to AQ
         EPwm5Regs.AQSFRC.bit.ACTSFB = 0;
@@ -408,7 +408,7 @@ void controle_bidirecional_bat(float duty_cycle, int enable){
         else if(duty_bid_bat < 0) duty_bid_bat = 0;
     }
     EALLOW;
-    if(enable && (MAsumVecPointer > 0) && (fabs(iLbat_ref) > 0) ){
+    if(enable && (MAsumVecPointer > 0) && (fabs(iLbat_ref) > 0.1) ){
     //if(enable){
         EPwm6Regs.AQSFRC.bit.ACTSFA = 0; // Optional: return control to AQ
         EPwm6Regs.AQSFRC.bit.ACTSFB = 0;
