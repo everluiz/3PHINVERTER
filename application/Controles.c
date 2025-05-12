@@ -468,7 +468,7 @@ void gera_referencia_HESS(){
         SC_power_ref = HESS_power_ref;
         BAT_power_ref = 0;
     } else if (fabs(FIS_output) <= 0.3) {
-        SC_power_ref = 0;
+        SC_power_ref = HESS_power_ref * (fabs(FIS_output)/ 0.3);
         BAT_power_ref = 0;
     } else {
         double weight = (FIS_output > 0) ? (1.0 - (FIS_output - 1.3)) : (1.0 - (-1.3 - FIS_output));
