@@ -141,6 +141,7 @@ float sum_sq_diff = 0.0;                // sum for std_dev
 
 uint16_t MAsize[MA_POINTS] = {1,  100, 200, 300, 400, 500, 600, 700, 800, 900, 1200};
 //uint16_t MAsize[MA_POINTS] = {200,200, 200, 200, 200, 200, 200, 200, 200, 200, 200};
+//uint16_t MAsize[MA_POINTS] = {1200,1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200};
 float MAsumVec[MA_POINTS] = {0.0};      // array of sum of points to the Moving Average
 extern uint16_t MAsumVecPointer;        // pointer to the current MAsumVec position
 uint16_t MAsumVecpreviousPointer = 0;   // pointer to the previous MAsumVec position
@@ -246,6 +247,7 @@ void update_MAwindow(){
     static const uint16_t hysteresis = 10; // Hysteresis margin
 
     MAsumVecPointer = 0; // Default value if std_dev is below the first threshold
+    //MAsumVecPointer = 1;   //  @@@@@ DEBUG @@@@@@
     static uint16_t i;
     for(i = 0; i < THRESHOLDS; i++){
         if(std_dev > thresholds[i]){
@@ -253,6 +255,9 @@ void update_MAwindow(){
         } else {
             break;
         }
+    }
+    if (MAsumVecPointer > 10){
+        MAsumVecPointer=10;
     }
 
     // Apply hysteresis: Change pointer only if std_dev exceeds the previous threshold by a margin
@@ -292,7 +297,6 @@ void moving_average(){
         if(MpCount <= MA_CURRENT){ // loading the Power array (first interaction)
             update_MAsumVec();
             AvgPower = MAsumVec[2]/MpCount;
-            MpCount++;
 
             VAR_sum += p_pv_new;
             AvgPowerVAR = AvgPower;
@@ -457,22 +461,6 @@ void gera_referencia_HESS(){
     HESS_power_ref = p_pv_new - AvgPower;                  // Compute the power reference for the HESS
 
 //    // calcula a referencia de potencia para os armazenadores
-//    if((FIS_output > 2.3) || (FIS_output < -2.3)){
-//        SC_power_ref = 0;
-//        BAT_power_ref = HESS_power_ref;
-//    }else if((0.3 < FIS_output) && (FIS_output < 1.3)){
-//        SC_power_ref = HESS_power_ref;
-//        BAT_power_ref = 0;
-//    }else if((-1.3 < FIS_output) && (FIS_output < -0.3)){
-//        SC_power_ref = HESS_power_ref;
-//        BAT_power_ref = 0;
-//    }else if((-0.3 < FIS_output) && (FIS_output < 0.3)){
-//        SC_power_ref = 0;
-//        BAT_power_ref = 0;
-//    }else{
-//        SC_power_ref = (FIS_output > 0.0) ? HESS_power_ref*(1.0 -(FIS_output-1.3)) : HESS_power_ref*(1.0 -(-1.3 -FIS_output));
-//        BAT_power_ref = (FIS_output > 0.0) ? HESS_power_ref*(FIS_output-1.3) : HESS_power_ref*(-1.3 -FIS_output);
-//    }
     if (fabs(FIS_output) > 2.3) {
         SC_power_ref = 0;
         BAT_power_ref = HESS_power_ref;
@@ -488,15 +476,20 @@ void gera_referencia_HESS(){
         BAT_power_ref = HESS_power_ref * (1.0 - weight);
     }
 
+    // @@@@ DEBUG @@@ - utiliza apenas BAT
+    //SC_power_ref = 0;
+    //BAT_power_ref = HESS_power_ref;
+    // @@@@ DEBUG @@@ - utiliza apenas BAT
+
     // calcura a referencia de corrente para o SC
     iLsc_ref = (v_sc_new > 0.0) ? SC_power_ref/v_sc_new : 0;   // Compute the current ref. for the SC controller
 
-        if((v_sc_new < V_SC_MIN ) && (iLsc_ref < 0.0)){
-            iLsc_ref = 0.0; // dont let the SC discharge below V_SC_MIN
-        }
-        if((v_sc_new > V_SC_MAX ) && (iLsc_ref > 0.0)){
-            iLsc_ref = 0.0; // dont let the SC charge above V_SC_MAX
-        }
+//        if((v_sc_new < V_SC_MIN ) && (iLsc_ref < 0.0)){
+//            iLsc_ref = 0.0; // dont let the SC discharge below V_SC_MIN
+//        }
+//        if((v_sc_new > V_SC_MAX ) && (iLsc_ref > 0.0)){
+//            iLsc_ref = 0.0; // dont let the SC charge above V_SC_MAX
+//        }
 
     // calcura a referencia de corrente para a BAT
     iLbat_ref = (SoC_est > 15.0) ? BAT_power_ref/V_BAT : 0;   // Compute the current ref. for the BAT controller
@@ -753,6 +746,7 @@ void maq_estados_inv()
 
                     estado_anterior = estado_atual;
                     estado_atual = CONECTADO;
+                    temporizacao(5);
                 }
                 break;
 
@@ -763,20 +757,23 @@ void maq_estados_inv()
                 MPPT();
                 boost_enable = 1;
                 controle_boost_paineisPV(v_pv_ref_FORCED, boost_enable);
-                moving_average();
-                //gera_referencia();
-                gera_referencia_HESS();
+
+                if(tempo_atingido){ // Ao atinigir o tempo, inicia o gerenciamento do HESS
+                    limpa_temporizador();
+                    HESS_enable = 1;
+                }
+
 
                 if(HESS_enable){
                     GPIO_WritePin(13, 1);
+                    moving_average();
+                    gera_referencia_HESS();
+                    controle_bidirecional_sc(sc_duty_cycle_FORCED, HESS_enable);
+                    estimador_SoC();
+                    controle_bidirecional_bat(BAT_duty_cycle_FORCED, HESS_enable);
                 }else{
                     GPIO_WritePin(13, 0);
                 }
-
-                controle_bidirecional_sc(sc_duty_cycle_FORCED, HESS_enable);
-                estimador_SoC();
-                controle_bidirecional_bat(BAT_duty_cycle_FORCED, HESS_enable);
-
                 break;
     }
 }

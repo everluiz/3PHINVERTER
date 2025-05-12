@@ -381,9 +381,9 @@ int main(void)
     C_SC.reset = (void (*)(unsigned int))pi_reg1_reset;
 
     //C_BAT.Kp = 0.05026;
-    C_BAT.Kp = 0.005026;
+    C_BAT.Kp = 0.03;
     //C_BAT.Ki = 11.05;
-    C_BAT.Ki = 0.1105;
+    C_BAT.Ki = 14.05;
     C_BAT.OutMax = 0.99;
     C_BAT.OutMin = -0.99;
     C_BAT.UiMax = 50.0;

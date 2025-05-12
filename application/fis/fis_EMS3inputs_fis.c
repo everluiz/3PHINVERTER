@@ -84,11 +84,13 @@ static const float SoC_medium_p[] = { 20.0000f, 55.0000f, 90.0000f };
 static const float SoC_high_p[] = { 1.3456f, 90.0000f };
 
 //static const float V_sc_low_p[] = { -0.5731f, 200.0000f };
-static const float V_sc_low_p[] = { -0.0630f, 150.0000f };
+//static const float V_sc_low_p[] = { -0.0630f, 150.0000f };
+static const float V_sc_low_p[] = { -0.0618f, 140.0000f };
 //static const float V_sc_medium_p[] = { 205.0000f, 240.0000f, 310.0000f };
 static const float V_sc_medium_p[] = { 18.2253f, 250.0000f };
 //static const float V_sc_high_p[] = { 0.2461f, 320.0000f };
-static const float V_sc_high_p[] = { 0.0983f, 320.0000f };
+//static const float V_sc_high_p[] = { 0.0983f, 320.0000f };
+static const float V_sc_high_p[] = { 0.0983f, 340.0000f };
 
 static const float P_ref_command_charge_SC_p[] = { 0.3000f, 0.6000f, 1.3000f, 2.3000f };
 static const float P_ref_command_discharge_SC_p[] = { -2.3000f, -1.3000f, -0.6000f, -0.3000f };
