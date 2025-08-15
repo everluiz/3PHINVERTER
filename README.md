@@ -8,8 +8,9 @@ The code is designed for the Delfino F28379D controlCARD (TMDSCNCD28379D) from T
 In Typhoon HIL, the PV panel, power converters and energy storage elements are emulated, enabling the validation of the control logic running on the microcontroller.
 Analog outputs are generated through the HIL Launchpad Interface, and voltage and current signals are analyzed using an oscilloscope.
 
+![image info](typhoon-diagram.png)
+
 Typhoon files:
-- G:\Meu Drive\2024\PPGEEC\Inverter
   - Typhoon schematic: PV3phGrid_uc.tse
   - SCADA model: pv3phGrid_panel.cus
   - SCADA model settings: pv3phGrid_uc_model.runx
