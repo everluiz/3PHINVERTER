@@ -1,0 +1,2112 @@
+<ui_settings>
+    <version>2.8</version>
+    <model_locked>False</model_locked>
+    <canvas_bg_color>#ffffff</canvas_bg_color>
+    <initialization_code><![CDATA[# NOTE: Variables and functions defined here will be
+# available for use in all Macro and Expression scripts.
+# This code is always executed after Custom UI is loaded and prior simulation start.
+
+# HIL Control Panel API
+
+
+# Variable 'SETTINGS_DIR' holds directory where loaded settings .cus file is located.
+# Also you can call 'get_settings_dir_path()' function in any
+# Macro and Expression scripts to get the same directory.
+SETTINGS_DIR = get_settings_dir_path()
+
+#--------------------------------
+# Global variables initialization
+#--------------------------------
+
+
+
+
+]]></initialization_code>
+    <components>
+        <component_data>
+                <id>b9130d918bf911e6aa4e342387ff00a2</id>
+                <name><![CDATA[SoC]]></name>
+                <type>Gauge</type>
+                <description><![CDATA[None]]></description>
+                <data_type>Analog signal</data_type>
+                <code><![CDATA[#------------- MANDATORY IMPORT -----------------
+# HIL Control Panel API
+
+#------------------------------------------------
+
+# mandatory variable used for storing value
+# that will be displayed
+displayValue = 0.0
+
+]]></code>
+                <signal_name><![CDATA[SoC]]></signal_name>
+                <unit><![CDATA[]]></unit>
+                <automatic_unit>True</automatic_unit>
+                <updateRate>500</updateRate>
+                <decimals>2</decimals>
+                <scaling_factor>1.0</scaling_factor>
+                <widget_settings>
+                    <x>648</x>
+                    <y>1000</y>
+                    <width>224</width>
+                    <height>136</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <color_range>False</color_range>
+                    <min>0.0</min>
+                    <max>100.0</max>
+                    <warning_range>(0, 0, 0, 0)</warning_range>
+                    <critical_range>(0, 0, 0, 0)</critical_range>
+                </advance_widget_settings>
+            </component_data>
+        <component_data>
+                <id>6c102ea18bff11e6af33342387ff00a2</id>
+                <name><![CDATA[DC link voltage]]></name>
+                <type>DigitalDisplay</type>
+                <description><![CDATA[None]]></description>
+                <data_type>Analog signal</data_type>
+                <code><![CDATA[#----------------------- MANDATORY IMPORT --------------------------
+# HIL Control Panel API
+
+# NOTE: Only read functions are available from HIL Control Panel API
+#-------------------------------------------------------------------
+
+# mandatory variable used for storing value
+# that will be displayed
+displayValue = 0.0
+
+]]></code>
+                <signal_name><![CDATA[Vcc]]></signal_name>
+                <unit><![CDATA[V]]></unit>
+                <automatic_unit>True</automatic_unit>
+                <decimals><![CDATA[2]]></decimals>
+                <updateRate>500</updateRate>
+                <scaling_factor>1.0</scaling_factor>
+                <widget_settings>
+                    <x>104</x>
+                    <y>72</y>
+                    <width>200</width>
+                    <height>80</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <color_range>False</color_range>
+                    <green_range>(0, 0, 0, 0)</green_range>
+                    <orange_range>(0, 0, 0, 0)</orange_range>
+                    <red_range>(0, 0, 0, 0)</red_range>
+                </advance_widget_settings>
+            </component_data>
+        <component_data>
+                <id>93a8929e947d11e695ad3c970e5956c7</id>
+                <name><![CDATA[Active_reactive power (W_VA)]]></name>
+                <type>TraceDisplay</type>
+                <description><![CDATA[Dispatch]]></description>
+                <data_type>Expression</data_type>
+                <code><![CDATA[#----------------------- MANDATORY IMPORT --------------------------
+# HIL Control Panel API
+
+# NOTE: Only read functions are available from HIL Control Panel API
+#-------------------------------------------------------------------
+
+# mandatory variable used for storing values
+# that will be displayed
+# e.g displayValue = [ [sigVal1,sigVal2,sigVal3], ["Signal 1 name","Signal 2 name","Signal 3 name"] ]
+
+# mandatory variable used for storing value
+# that will be displayed
+displayValue = 0.0
+
+Ia_rms = hil.read_analog_signal(name='Ia_rms')
+Ib_rms = hil.read_analog_signal(name='Ib_rms')
+Ic_rms = hil.read_analog_signal(name='Ic_rms')
+
+Va_rms = hil.read_analog_signal(name='Va_rms')
+Vb_rms = hil.read_analog_signal(name='Vb_rms')
+Vc_rms = hil.read_analog_signal(name='Vc_rms')
+
+displayValue = Ia_rms*Va_rms + Ib_rms*Vb_rms + Ic_rms*Vc_rms]]></code>
+                <analog_signals><![CDATA[['P', 'Q']]]></analog_signals>
+                <digital_signals><![CDATA[[]]]></digital_signals>
+                <streaming_analog_signals><![CDATA[[]]]></streaming_analog_signals>
+                <streaming_digital_signals><![CDATA[[]]]></streaming_digital_signals>
+                <analog_signals_scaling_factors><![CDATA[{'P': 1.0, 'Q': 1.0}]]></analog_signals_scaling_factors>
+                <streaming_analog_signals_scaling_factors><![CDATA[{}]]></streaming_analog_signals_scaling_factors>
+                <update_rate>250</update_rate>
+                <execution_rate>None</execution_rate>
+                <background_color>white</background_color>
+                <widget_settings>
+                    <x>24</x>
+                    <y>200</y>
+                    <width>800</width>
+                    <height>400</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[Active Power dispatch]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <x_title><![CDATA[x axes]]></x_title>
+                    <y_title><![CDATA[y axes]]></y_title>
+                    <y_range_min>-10000.0</y_range_min>
+                    <y_range_max>10000.0</y_range_max>
+                    <time_window>600</time_window>
+                    <auto_scale_enabled>False</auto_scale_enabled>
+                    <legend_enabled>True</legend_enabled>
+                    <x_axis_title_enabled>False</x_axis_title_enabled>
+                    <y_axis_title_enabled>False</y_axis_title_enabled>
+                    <use_reference_curve>True</use_reference_curve>
+                    <reference_curve_code><![CDATA[# NOTE: Global namespace variables are available
+# Selected time window is available through variable 'timeWindow'
+# Selected update rate is available through variable 'updateRate'
+
+# reference curve data point
+curveData = 8800.0
+
+# specify curve options ('data' part is mandatory)
+refCurveData1 = {
+    # reference curve data point
+    "data": curveData,
+
+    # curve line style: 'solid', 'dashed', 'dashdot', 'dotted'
+    "line_style": "dashed",
+
+    # curve line color: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow'
+    "line_color": 'green',
+
+    # curve line width: float number
+    "line_width": 2.0,
+    
+    # reference curve title
+    "title": "Nominal Power",
+
+    # show a title in the legend
+    "show_in_legend": True
+}
+
+# list of reference curves data: [ref1, ref2,...refN]
+referenceCurves = [refCurveData1]
+
+]]></reference_curve_code>
+                </advance_widget_settings>
+            </component_data>
+        <component_data>
+                <id>6ddd90511de611e796fcd43d7ef890c6</id>
+                <name><![CDATA[Capture_Scope]]></name>
+                <type>Capture/Scope</type>
+                <description><![CDATA[Capture/Scope]]></description>
+                <working_mode>windowed</working_mode>
+                <widget_settings>
+                    <x>40</x>
+                    <y>720</y>
+                    <width>120</width>
+                    <height>120</height>
+                    <hierarchy_position>1</hierarchy_position>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <state>Capture</state>
+                    <layout>None</layout>
+                    <virtual_signals_definitions>
+                    </virtual_signals_definitions>
+                    <presets>
+                        <active_capture_preset><![CDATA[Default]]></active_capture_preset>
+                        <active_scope_preset><![CDATA[Default]]></active_scope_preset>
+                        <capture name="Default">
+                            <time_interval>350.0</time_interval>
+                            <sample_rate>20000.0</sample_rate>
+                            <background_color>white</background_color>
+                            <layout>Grid</layout>
+                            <legend>True</legend>
+                            <analog_signals>
+                                <analog>
+                                    <channel>0</channel>
+                                    <name><![CDATA[I_bat]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>0</row>
+                                    <viewports>
+                                        <num_viewport>1</num_viewport>
+                                   </viewports>
+                               </analog>
+                                <analog>
+                                    <channel>1</channel>
+                                    <name><![CDATA[I_sc]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>1</row>
+                                    <viewports>
+                                        <num_viewport>2</num_viewport>
+                                   </viewports>
+                               </analog>
+                                <analog>
+                                    <channel>2</channel>
+                                    <name><![CDATA[SoC]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>2</row>
+                                    <viewports>
+                                        <num_viewport>3</num_viewport>
+                                   </viewports>
+                               </analog>
+                                <analog>
+                                    <channel>3</channel>
+                                    <name><![CDATA[V_sc]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>3</row>
+                                    <viewports>
+                                        <num_viewport>4</num_viewport>
+                                   </viewports>
+                               </analog>
+                            </analog_signals>
+                            <digital_signals>
+                            </digital_signals>
+                            <virtual_signals>
+                            </virtual_signals>
+                            <trigger>
+                                <device>0</device>
+                                <is_force>True</is_force>
+                                <type>Analog</type>
+                                <source><![CDATA[I_bat]]></source>
+                                <edge>Rising edge</edge>
+                                <treshold>0.0</treshold>
+                                <offset>50.0</offset>
+                                <useFirstTrigger>False</useFirstTrigger>
+                            </trigger>
+                            <plotting_options in_use="False">
+                                <subplots>
+                                    </subplots>
+                            </plotting_options>
+                        </capture>
+                        <scope name="Default">
+                            <background_color>black</background_color>
+                            <layout>Grid</layout>
+                            <legend>True</legend>
+                            <show_viewports>4</show_viewports>
+                            <decimation>3.0</decimation>
+                            <time_base>0.005</time_base>
+                            <analog_signals>
+                                <analog>
+                                    <channel>0</channel>
+                                    <name><![CDATA[Va]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>0</row>
+                                    <viewports>
+                                        <num_viewport>1</num_viewport>
+                                   </viewports>
+                               </analog>
+                                <analog>
+                                    <channel>1</channel>
+                                    <name><![CDATA[Vb]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>1</row>
+                                    <viewports>
+                                        <num_viewport>1</num_viewport>
+                                   </viewports>
+                               </analog>
+                                <analog>
+                                    <channel>2</channel>
+                                    <name><![CDATA[Vc]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>2</row>
+                                    <viewports>
+                                        <num_viewport>1</num_viewport>
+                                   </viewports>
+                               </analog>
+                                <analog>
+                                    <channel>3</channel>
+                                    <name><![CDATA[Ia]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>3</row>
+                                    <viewports>
+                                        <num_viewport>2</num_viewport>
+                                   </viewports>
+                               </analog>
+                                <analog>
+                                    <channel>4</channel>
+                                    <name><![CDATA[Ib]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>4</row>
+                                    <viewports>
+                                        <num_viewport>2</num_viewport>
+                                   </viewports>
+                               </analog>
+                                <analog>
+                                    <channel>5</channel>
+                                    <name><![CDATA[Ic]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>5</row>
+                                    <viewports>
+                                        <num_viewport>2</num_viewport>
+                                   </viewports>
+                               </analog>
+                                <analog>
+                                    <channel>6</channel>
+                                    <name><![CDATA[Vcc]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>6</row>
+                                    <viewports>
+                                        <num_viewport>4</num_viewport>
+                                   </viewports>
+                               </analog>
+                                <analog>
+                                    <channel>7</channel>
+                                    <name><![CDATA[P]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>7</row>
+                                    <viewports>
+                                        <num_viewport>3</num_viewport>
+                                   </viewports>
+                               </analog>
+                                <analog>
+                                    <channel>8</channel>
+                                    <name><![CDATA[Q]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>8</row>
+                                    <viewports>
+                                        <num_viewport>3</num_viewport>
+                                   </viewports>
+                               </analog>
+                            </analog_signals>
+                            <digital_signals>
+                            </digital_signals>
+                            <trigger>
+                                <device>0</device>
+                                <is_force>False</is_force>
+                                <type>Analog</type>
+                                <source>Va</source>
+                                <edge>Rising edge</edge>
+                                <treshold>0.0</treshold>
+                                <offset>50.0</offset>
+                                <useFirstTrigger>False</useFirstTrigger>
+                            </trigger>
+                        </scope>
+                        </presets>
+                    <capture>
+                        <time_interval>350.0</time_interval>
+                        <sample_rate>20000.0</sample_rate>
+                        <background_color>white</background_color>
+                        <layout>Grid</layout>
+                        <legend>True</legend>
+                        <trigger>
+                            <type>Analog</type>
+                            <source>I_bat</source>
+                            <edge>Rising edge</edge>
+                            <treshold>0.0</treshold>
+                            <offset>50.0</offset>
+                            <useFirstTrigger>False</useFirstTrigger>
+                        </trigger>
+                        <analog_signals>
+                            <analog>
+                                    <channel>0</channel>
+                                    <name><![CDATA[I_bat]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>0</row>
+                                    <viewports>
+                                        <num_viewport>1</num_viewport>
+                                   </viewports>
+                               </analog>
+                            <analog>
+                                    <channel>1</channel>
+                                    <name><![CDATA[I_sc]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>1</row>
+                                    <viewports>
+                                        <num_viewport>2</num_viewport>
+                                   </viewports>
+                               </analog>
+                            <analog>
+                                    <channel>2</channel>
+                                    <name><![CDATA[SoC]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>2</row>
+                                    <viewports>
+                                        <num_viewport>3</num_viewport>
+                                   </viewports>
+                               </analog>
+                            <analog>
+                                    <channel>3</channel>
+                                    <name><![CDATA[V_sc]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>3</row>
+                                    <viewports>
+                                        <num_viewport>4</num_viewport>
+                                   </viewports>
+                               </analog>
+                        </analog_signals>
+                         <digital_signals>
+                         </digital_signals>
+                    </capture>
+                    <scope>
+                        <time_base>0.005 </time_base>
+                        <background_color>black</background_color>
+                        <layout>Grid</layout>
+                        <legend>True</legend>
+                        <trigger>
+                            <mode>Auto</mode>
+                            <type>Analog</type>
+                            <source>Va</source>
+                            <edge>Rising edge</edge>
+                            <treshold>0.0</treshold>
+                            <offset>50.0</offset>
+                        </trigger>
+                         <analog_signals>
+                            <analog>
+                                    <channel>0</channel>
+                                    <name><![CDATA[Va]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>0</row>
+                                    <viewports>
+                                        <num_viewport>1</num_viewport>
+                                   </viewports>
+                               </analog>
+                            <analog>
+                                    <channel>1</channel>
+                                    <name><![CDATA[Vb]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>1</row>
+                                    <viewports>
+                                        <num_viewport>1</num_viewport>
+                                   </viewports>
+                               </analog>
+                            <analog>
+                                    <channel>2</channel>
+                                    <name><![CDATA[Vc]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>2</row>
+                                    <viewports>
+                                        <num_viewport>1</num_viewport>
+                                   </viewports>
+                               </analog>
+                            <analog>
+                                    <channel>3</channel>
+                                    <name><![CDATA[Ia]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>3</row>
+                                    <viewports>
+                                        <num_viewport>2</num_viewport>
+                                   </viewports>
+                               </analog>
+                            <analog>
+                                    <channel>4</channel>
+                                    <name><![CDATA[Ib]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>4</row>
+                                    <viewports>
+                                        <num_viewport>2</num_viewport>
+                                   </viewports>
+                               </analog>
+                            <analog>
+                                    <channel>5</channel>
+                                    <name><![CDATA[Ic]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>5</row>
+                                    <viewports>
+                                        <num_viewport>2</num_viewport>
+                                   </viewports>
+                               </analog>
+                            <analog>
+                                    <channel>6</channel>
+                                    <name><![CDATA[Vcc]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>6</row>
+                                    <viewports>
+                                        <num_viewport>4</num_viewport>
+                                   </viewports>
+                               </analog>
+                            <analog>
+                                    <channel>7</channel>
+                                    <name><![CDATA[P]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>7</row>
+                                    <viewports>
+                                        <num_viewport>3</num_viewport>
+                                   </viewports>
+                               </analog>
+                            <analog>
+                                    <channel>8</channel>
+                                    <name><![CDATA[Q]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>8</row>
+                                    <viewports>
+                                        <num_viewport>3</num_viewport>
+                                   </viewports>
+                               </analog>
+                        </analog_signals>
+                        <digital_signals>
+                        </digital_signals>
+                    </scope>
+                    <plotting_options in_use="False">
+                    
+                        <subplots>
+                            </subplots>
+                    </plotting_options>
+                </widget_settings>
+
+            </component_data>
+        <component_data>
+                <id>7475cbcf1de611e79869d43d7ef890c6</id>
+                <name><![CDATA[Note component]]></name>
+                <type>TextNote</type>
+                <description><![CDATA[]]></description>
+                <text><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<html><head><meta name="qrichtext" content="1" /><style type="text/css">
+p, li { white-space: pre-wrap; }
+</style></head><body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;">
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-weight:600;"> Capture/Scope</span></p></body></html>]]></text>
+                <widget_settings>
+                    <x>56</x>
+                    <y>640</y>
+                    <width>112</width>
+                    <height>32</height>
+                    <background_color><![CDATA[#f0f0f0]]></background_color>
+                    <background_type><![CDATA[Filled]]></background_type>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position>1</hierarchy_position>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+            </component_data>
+        <component_data>
+                <id>7c7b722128eb11e7a8903c970e5956c7</id>
+                <name><![CDATA[Initialization]]></name>
+                <type>Macro</type>
+                <description><![CDATA[]]></description>
+                <on_click_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed on button click.
+# HIL API
+
+
+
+]]></on_click_code>
+                <on_start_code active="True"><![CDATA[# NOTE: The code specified in this handler will be executed on simulation start.
+# NOTE: Variables specified here will be available in other two handlers.
+# HIL API
+
+
+#Sources
+hil.set_source_constant_value('Vdc_link', value = 400.0)
+hil.set_source_sine_waveform('Vgrid', rms = 127.0, frequency = 60.0)
+]]></on_start_code>
+                <on_timer_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed on timer event.
+# HIL API
+
+
+
+]]></on_timer_code>
+                <run_each>250</run_each>
+                <on_stop_code active="True"><![CDATA[# NOTE: The code specified in this handler will be executed after simulation is stopped.
+# HIL API is imported as 'hil'
+
+]]></on_stop_code>
+                <widget_settings>
+                    <x>208</x>
+                    <y>640</y>
+                    <width>128</width>
+                    <height>40</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+            </component_data>
+        <component_data>
+                <id>29dddbef916e11eea49c687a64d23b05</id>
+                <name><![CDATA[Irr profile]]></name>
+                <type>Macro</type>
+                <description><![CDATA[]]></description>
+                <on_click_code active="True"><![CDATA[# NOTE: The code specified in this handler will be executed on button click.
+# HIL API is imported as 'hil'
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+bIrrListStart = 1]]></on_click_code>
+                <on_start_code active="True"><![CDATA[# NOTE: The code specified in this handler will be executed on simulation start.
+# NOTE: Variables specified here will be available in other handlers.
+# HIL API is imported as 'hil'
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+# NOTE: The code specified in this handler will be executed on simulation start.
+
+IrrListCounter = 0
+bIrrListStart = 0
+
+irrList = [1000,
+965.106433000000,
+967.847792000000,
+970.524476000000,
+972.539988000000,
+972.325054000000,
+933.678213000000,
+907.706671000000,
+890.656506000000,
+793.435865000000,
+862.082221000000,
+955.179993000000,
+967.772449000000,
+967.667863000000,
+927.295685000000,
+845.201066000000,
+898.417091000000,
+956.505457000000,
+969.409651000000,
+972.016079000000,
+951.649399000000,
+896.927757000000,
+832.429912000000,
+725.161778000000,
+660.931065000000,
+583.660482000000,
+507.289067000000,
+453.396447000000,
+310.368692000000,
+252.250448000000,
+238.956912000000,
+237.014398000000,
+253.848992000000,
+341.332009000000,
+375.446583000000,
+346.482889000000,
+443.699176000000,
+682.781167000000,
+878.827952000000,
+969.177004000000,
+993.430171000000,
+997.074368000000,
+998.638068000000,
+999.434723000000,
+997.982782000000,
+998.614649000000,
+998.221931000000,
+999.500257000000,
+1000.43074000000,
+997.586324000000,
+975.479183000000,
+873.942605000000,
+809.892492000000,
+848.945534000000,
+862.457012000000,
+823.740578000000,
+728.266599000000,
+570.517329000000,
+546.833482000000,
+642.717511000000,
+766.484787000000,
+837.214217000000,
+904.126988000000,
+931.987611000000,
+894.138953000000,
+876.409096000000,
+922.313268000000,
+957.820073000000,
+977.709872000000,
+985.169424000000,
+986.387303000000,
+986.631235000000,
+985.960378000000,
+984.934014000000,
+984.398457000000,
+984.223861000000,
+983.102966000000,
+981.339905000000,
+980.917025000000,
+981.384780000000,
+980.682351000000,
+981.253527000000,
+980.350938000000,
+980.174442000000,
+980.633430000000,
+981.108848000000,
+980.978698000000,
+981.037489000000,
+981.904153000000,
+982.513338000000,
+983.036696000000,
+983.181498000000,
+983.878348000000,
+984.321642000000,
+984.175124000000,
+983.587457000000,
+982.614797000000,
+980.802753000000,
+980.961471000000,
+983.492803000000,
+986.019537000000,
+988.612848000000,
+989.954010000000,
+991.130202000000,
+991.723571000000,
+993.718303000000,
+995.303949000000,
+995.833867000000,
+997.107595000000,
+997.372677000000,
+998.187417000000,
+997.643889000000,
+997.648855000000,
+993.690348000000,
+939.321194000000,
+764.301483000000,
+556.120489000000,
+413.949241000000,
+319.152413000000,
+238.909955000000,
+223.973559000000,
+221.754998000000,
+219.856010000000,
+217.886830000000,
+216.349408000000,
+214.885489000000,
+213.529463000000,
+212.265086000000,
+211.106334000000,
+210.062280000000,
+209.141752000000,
+208.313118000000,
+207.653373000000,
+207.135546000000,
+206.712738000000,
+206.401440000000,
+206.267064000000,
+206.265593000000,
+206.373425000000,
+206.564752000000,
+206.850609000000,
+207.196481000000,
+207.616591000000,
+208.111675000000,
+208.673519000000,
+209.299362000000,
+209.981237000000,
+210.734346000000,
+211.505969000000,
+212.340611000000,
+213.249124000000,
+214.197974000000,
+215.187775000000,
+216.220549000000,
+217.286182000000,
+218.379585000000,
+219.481999000000,
+220.645288000000,
+221.835121000000,
+223.161782000000,
+224.540123000000,
+225.649955000000,
+227.141032000000,
+231.425756000000,
+237.624671000000,
+245.365057000000,
+269.334796000000,
+332.706383000000,
+458.974538000000,
+670.005827000000,
+827.373232000000,
+880.846556000000,
+929.436488000000,
+975.012775000000,
+996.730939000000,
+996.232900000000,
+999.840376000000,
+1007.41126500000,
+1007.70877700000,
+1007.70185000000,
+1007.23538200000,
+1007.10302500000,
+1006.51161800000,
+1005.70368300000,
+1005.11865200000,
+1003.85252500000,
+1003.23702600000,
+1002.81426800000,
+1002.32401400000,
+1001.30120600000,
+1000.48701800000,
+999.938157000000,
+999.492410000000,
+999.417925000000,
+999.118022000000,
+998.771712000000,
+998.343376000000,
+998.187110000000,
+998.143155000000,
+998.603614000000,
+998.087183000000,
+998.509328000000,
+998.742286000000,
+998.969174000000,
+998.904988000000,
+999.737997000000,
+999.849142000000,
+999.709245000000,
+999.572658000000,
+999.471689000000,
+998.798931000000,
+998.832404000000,
+998.880344000000,
+999.012026000000,
+998.654191000000,
+991.971794000000,
+961.514847000000,
+844.164081000000,
+711.832066000000,
+653.997409000000,
+671.765073000000,
+792.749890000000,
+891.250170000000,
+943.245827000000,
+982.685544000000,
+984.653239000000,
+970.924243000000,
+896.807764000000,
+694.875478000000,
+687.298542000000,
+883.418139000000,
+937.050201000000,
+936.428941000000,
+944.841215000000,
+898.120987000000,
+836.386547000000,
+827.441880000000,
+874.648076000000,
+954.381075000000,
+991.336125000000,
+993.390323000000,
+993.058235000000,
+992.425632000000,
+992.054003000000,
+990.859971000000,
+989.870697000000,
+988.792164000000,
+988.404289000000,
+987.319257000000,
+986.323853000000,
+986.191128000000,
+985.609408000000]
+
+listSize = len(irrList)
+(status, (Imp, Vmp)) = hil.set_pv_amb_params(
+    "Photovoltaic Panel", illumination=irrList[IrrListCounter])]]></on_start_code>
+                <on_timer_code active="True"><![CDATA[# NOTE: The code specified in this handler will be executed on timer event.
+# HIL API is imported as 'hil'
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+if bIrrListStart:
+    if IrrListCounter == listSize:
+        bIrrListStart = 0
+        IrrListCounter = 0
+        
+    (status, (Imp, Vmp)) = hil.set_pv_amb_params(
+    "Photovoltaic Panel", illumination=irrList[IrrListCounter])
+    IrrListCounter = IrrListCounter + 1
+    ]]></on_timer_code>
+                <run_each>1000</run_each>
+                <on_stop_code active="True"><![CDATA[# NOTE: The code specified in this handler will be executed after simulation is stopped.
+# HIL API is imported as 'hil'
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+bIrrListStart = 0
+IrrListCounter = 0]]></on_stop_code>
+                <widget_settings>
+                    <x>352</x>
+                    <y>640</y>
+                    <width>128</width>
+                    <height>40</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+            </component_data>
+        <component_data>
+                <id>58b16ef1916e11ee8911687a64d23b05</id>
+                <name><![CDATA[Signal data logger]]></name>
+                <type>SignalDataLogger</type>
+                <description><![CDATA[]]></description>
+                <data_type>Signals</data_type>
+                <expression_code><![CDATA[# HIL API is imported as 'hil'
+# NOTE: Only read functions are available from the HIL API
+
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# mandatory variable used for storing values that will be logged into the data file
+# specify logging data ("names" and "values" parts are mandatory)
+data = {
+    # signals/data names: ["Signal 1 name","Signal 2 name","Signal 3 name"]
+    "names": [],
+
+    # signals/data values: [sigVal1,sigVal2,sigVal3]
+    "values": [],
+    }
+]]></expression_code>
+                <analog_signals><![CDATA[['P', 'Q', 'Vcc', 'Ia', 'Ib', 'Ic', 'Photovoltaic Panel', 'V_sc', 'I_sc', 'Battery.SOC', 'Battery.voltage', 'I_bat']]]></analog_signals>
+                <digital_signals><![CDATA[[]]]></digital_signals>
+                <update_rate>250</update_rate>
+                <use_slower_update_rate>False</use_slower_update_rate>
+                <slower_update_rate>2</slower_update_rate>
+                <widget_settings>
+                    <x>216</x>
+                    <y>720</y>
+                    <width>120</width>
+                    <height>120</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <data_file_settings>
+                    <data_file_dir><![CDATA[G:/Meu Drive/2024/PPGEEC/Inverter/debug-120325]]></data_file_dir>
+                    <data_file_name><![CDATA[power_data]]></data_file_name>
+                    <use_panel_file_dir>False</use_panel_file_dir>
+                    <data_file_format><![CDATA[csv]]></data_file_format>
+                    <use_file_name_suffix><![CDATA[True]]></use_file_name_suffix>
+                    <start_logging_on_sim_start><![CDATA[False]]></start_logging_on_sim_start>
+                </data_file_settings>
+            </component_data>
+        <component_data>
+                <id>4a00c42c92db11eeb3ad687a64d23b05</id>
+                <name><![CDATA[I_SC]]></name>
+                <type>Gauge</type>
+                <description><![CDATA[None]]></description>
+                <data_type>Analog signal</data_type>
+                <code><![CDATA[#------------- MANDATORY IMPORT -----------------
+# HIL Control Panel API
+
+#------------------------------------------------
+
+# mandatory variable used for storing value
+# that will be displayed
+displayValue = 0.0
+
+]]></code>
+                <signal_name><![CDATA[I_sc]]></signal_name>
+                <unit><![CDATA[A]]></unit>
+                <automatic_unit>True</automatic_unit>
+                <updateRate>500</updateRate>
+                <decimals>2</decimals>
+                <scaling_factor>1.0</scaling_factor>
+                <widget_settings>
+                    <x>544</x>
+                    <y>648</y>
+                    <width>224</width>
+                    <height>136</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <color_range>False</color_range>
+                    <min>-50.0</min>
+                    <max>50.0</max>
+                    <warning_range>(0, 0, 0, 0)</warning_range>
+                    <critical_range>(0, 0, 0, 0)</critical_range>
+                </advance_widget_settings>
+            </component_data>
+        <component_data>
+                <id>4a0326dd92db11eeb8e0687a64d23b05</id>
+                <name><![CDATA[V_SC]]></name>
+                <type>Gauge</type>
+                <description><![CDATA[None]]></description>
+                <data_type>Analog signal</data_type>
+                <code><![CDATA[#------------- MANDATORY IMPORT -----------------
+# HIL Control Panel API
+
+#------------------------------------------------
+
+# mandatory variable used for storing value
+# that will be displayed
+displayValue = 0.0
+
+]]></code>
+                <signal_name><![CDATA[V_sc]]></signal_name>
+                <unit><![CDATA[V]]></unit>
+                <automatic_unit>True</automatic_unit>
+                <updateRate>500</updateRate>
+                <decimals>2</decimals>
+                <scaling_factor>1.0</scaling_factor>
+                <widget_settings>
+                    <x>544</x>
+                    <y>808</y>
+                    <width>224</width>
+                    <height>136</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <color_range>False</color_range>
+                    <min>0.0</min>
+                    <max>500.0</max>
+                    <warning_range>(0, 0, 0, 0)</warning_range>
+                    <critical_range>(0, 0, 0, 0)</critical_range>
+                </advance_widget_settings>
+            </component_data>
+        <component_data>
+                <id>95e9a9e692db11ee8e3c687a64d23b05</id>
+                <name><![CDATA[S1]]></name>
+                <type>DigitalDisplay</type>
+                <description><![CDATA[]]></description>
+                <data_type>Analog signal</data_type>
+                <code><![CDATA[# HIL API is imported as 'hil'
+# NOTE: Only read functions are available from the HIL API
+
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# mandatory variable used for storing value that will be displayed
+displayValue = 0.0
+
+]]></code>
+                <signal_name><![CDATA[IGBT Leg1.I_S1]]></signal_name>
+                <unit><![CDATA[A]]></unit>
+                <automatic_unit>True</automatic_unit>
+                <decimals><![CDATA[2]]></decimals>
+                <updateRate>500</updateRate>
+                <scaling_factor>1.0</scaling_factor>
+                <widget_settings>
+                    <x>1048</x>
+                    <y>864</y>
+                    <width>144</width>
+                    <height>56</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <color_range>False</color_range>
+                    <green_range>(0, 0, 0, 0)</green_range>
+                    <orange_range>(0, 0, 0, 0)</orange_range>
+                    <red_range>(0, 0, 0, 0)</red_range>
+                </advance_widget_settings>
+            </component_data>
+        <component_data>
+                <id>daacc44492db11eebebe687a64d23b05</id>
+                <name><![CDATA[S2]]></name>
+                <type>DigitalDisplay</type>
+                <description><![CDATA[]]></description>
+                <data_type>Analog signal</data_type>
+                <code><![CDATA[# HIL API is imported as 'hil'
+# NOTE: Only read functions are available from the HIL API
+
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# mandatory variable used for storing value that will be displayed
+displayValue = 0.0
+
+]]></code>
+                <signal_name><![CDATA[IGBT Leg1.I_S2]]></signal_name>
+                <unit><![CDATA[A]]></unit>
+                <automatic_unit>True</automatic_unit>
+                <decimals><![CDATA[2]]></decimals>
+                <updateRate>500</updateRate>
+                <scaling_factor>1.0</scaling_factor>
+                <widget_settings>
+                    <x>1048</x>
+                    <y>936</y>
+                    <width>144</width>
+                    <height>56</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <color_range>False</color_range>
+                    <green_range>(0, 0, 0, 0)</green_range>
+                    <orange_range>(0, 0, 0, 0)</orange_range>
+                    <red_range>(0, 0, 0, 0)</red_range>
+                </advance_widget_settings>
+            </component_data>
+        <component_data>
+                <id>5146ecf459a711ef8326687a64d23b05</id>
+                <name><![CDATA[LED]]></name>
+                <type>LedDisplay</type>
+                <description><![CDATA[]]></description>
+                <data_type>Digital signal</data_type>
+                <signal_name><![CDATA[d_cont]]></signal_name>
+                <hil_device>0</hil_device>
+                <led_color>Red</led_color>
+                <code><![CDATA[# HIL API is imported as 'hil'
+# NOTE: Only read functions are available from the HIL API
+
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# mandatory variable used for storing LED indicator state
+# True -> On, False -> Off
+displayValue = False
+]]></code>
+                <updateRate>500</updateRate>
+                <widget_settings>
+                    <x>1304</x>
+                    <y>952</y>
+                    <width>56</width>
+                    <height>32</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+            </component_data>
+        <component_data>
+                <id>34fbca8c5e5311efafa4687a64d23b05</id>
+                <name><![CDATA[Id_ref]]></name>
+                <type>SliderMacro</type>
+                <description><![CDATA[]]></description>
+                <on_use_code active="True"><![CDATA[# HIL API is imported as 'hil'
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+# NOTE: entered value is available through variable 'inputValue'
+hil.set_scada_input_value('Id_ref', inputValue)
+#hil.set_parameter_value('Id_ref', inputValue)]]></on_use_code>
+                <on_start_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed on simulation start.
+# NOTE: Variables specified here will be available in other handlers.
+# HIL API is imported as 'hil'
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# Change widget value by setting this variable.
+# NOTE: If you not specify 'widgetValue' variable or assign 'None' to it,
+# widget value won't be changed.
+widgetValue = None
+]]></on_start_code>
+                <on_stop_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed after simulation is stopped.
+# HIL API is imported as 'hil'
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# Change widget value by setting this variable.
+# NOTE: If you not specify 'widgetValue' variable or assign 'None' to it,
+# widget value won't be changed.
+widgetValue = None
+]]></on_stop_code>
+                <on_timer_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed periodically each 1000ms.
+# HIL API is imported as 'hil'
+# NOTE: Only read functions are available from the HIL API
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# Change the widget value by setting this variable.
+# NOTE: If you do not specify a 'widgetValue' variable or assign 'None' to it,
+# the widget value will not be changed.
+widgetValue = None
+]]></on_timer_code>
+                <on_start_code_source><![CDATA[Custom code]]></on_start_code_source>
+                <inputValue><![CDATA[0.0]]></inputValue>
+                <min>0.0</min>
+                <max>100.0</max>
+                <step>1.0</step>
+                <widget_settings>
+                    <x>1216</x>
+                    <y>1000</y>
+                    <width>288</width>
+                    <height>48</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+            </component_data>
+        <component_data>
+                <id>6a3ace4a5e5311ef801d687a64d23b05</id>
+                <name><![CDATA[Contatora]]></name>
+                <type>ComboBoxMacro</type>
+                <description><![CDATA[]]></description>
+                <on_use_code active="True"><![CDATA[# HIL API is imported as 'hil'
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+# NOTE: entered value is available through variable 'inputValue'
+
+if inputValue == 'Aberta':
+    # do something when 'Case 1' is selected
+    hil.set_contactor('S5',swControl= True,swState= False)
+    pass
+elif inputValue == 'Fechada':
+    # do something when 'Case 2' is selected
+    hil.set_contactor('S5',swControl= True,swState= True)
+    pass
+
+]]></on_use_code>
+                <on_start_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed on simulation start.
+# NOTE: Variables specified here will be available in other handlers.
+# HIL API is imported as 'hil'
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# Change widget value by setting this variable.
+# NOTE: If you not specify 'widgetValue' variable or assign 'None' to it,
+# widget value won't be changed.
+widgetValue = None
+]]></on_start_code>
+                <on_stop_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed after simulation is stopped.
+# HIL API is imported as 'hil'
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# Change widget value by setting this variable.
+# NOTE: If you not specify 'widgetValue' variable or assign 'None' to it,
+# widget value won't be changed.
+widgetValue = None
+]]></on_stop_code>
+                <on_timer_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed periodically each 1000ms.
+# HIL API is imported as 'hil'
+# NOTE: Only read functions are available from the HIL API
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# Change the widget value by setting this variable.
+# NOTE: If you do not specify a 'widgetValue' variable or assign 'None' to it,
+# the widget value will not be changed.
+widgetValue = None
+]]></on_timer_code>
+                <on_start_code_source><![CDATA[Custom code]]></on_start_code_source>
+                <inputValue><![CDATA[Aberta]]></inputValue>
+                <availableValues><![CDATA[['Aberta', 'Fechada']]]></availableValues>
+                <unit><![CDATA[]]></unit>
+                <widget_settings>
+                    <x>1264</x>
+                    <y>848</y>
+                    <width>160</width>
+                    <height>32</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+            </component_data>
+        <component_data>
+                <id>e2e180615e5911ef9b4e687a64d23b05</id>
+                <name><![CDATA[trigger_ctrl]]></name>
+                <type>ComboBoxMacro</type>
+                <description><![CDATA[]]></description>
+                <on_use_code active="True"><![CDATA[# HIL API is imported as 'hil'
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+# NOTE: entered value is available through variable 'inputValue'
+
+if inputValue == 'Aberta':
+    # do something when 'Case 1' is selected
+    #hil.set_scada_input_value('cont', 0)
+    hil.set_source_constant_value('contatora_trg', 0)
+    pass
+elif inputValue == 'Fechada':
+    # do something when 'Case 2' is selected
+    #hil.set_scada_input_value('cont', 1)
+    hil.set_source_constant_value('contatora_trg', 1)
+    pass
+
+]]></on_use_code>
+                <on_start_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed on simulation start.
+# NOTE: Variables specified here will be available in other handlers.
+# HIL API is imported as 'hil'
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# Change widget value by setting this variable.
+# NOTE: If you not specify 'widgetValue' variable or assign 'None' to it,
+# widget value won't be changed.
+widgetValue = None
+]]></on_start_code>
+                <on_stop_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed after simulation is stopped.
+# HIL API is imported as 'hil'
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# Change widget value by setting this variable.
+# NOTE: If you not specify 'widgetValue' variable or assign 'None' to it,
+# widget value won't be changed.
+widgetValue = None
+]]></on_stop_code>
+                <on_timer_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed periodically each 1000ms.
+# HIL API is imported as 'hil'
+# NOTE: Only read functions are available from the HIL API
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# Change the widget value by setting this variable.
+# NOTE: If you do not specify a 'widgetValue' variable or assign 'None' to it,
+# the widget value will not be changed.
+widgetValue = None
+]]></on_timer_code>
+                <on_start_code_source><![CDATA[Custom code]]></on_start_code_source>
+                <inputValue><![CDATA[Aberta]]></inputValue>
+                <availableValues><![CDATA[['Aberta', 'Fechada']]]></availableValues>
+                <unit><![CDATA[]]></unit>
+                <widget_settings>
+                    <x>1264</x>
+                    <y>880</y>
+                    <width>160</width>
+                    <height>32</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+            </component_data>
+        <component_data>
+                <id>f7c3bfb963d411ef87cc687a64d23b05</id>
+                <name><![CDATA[enable_inv]]></name>
+                <type>ComboBoxMacro</type>
+                <description><![CDATA[]]></description>
+                <on_use_code active="True"><![CDATA[# HIL API is imported as 'hil'
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+# NOTE: entered value is available through variable 'inputValue'
+
+if inputValue == 'Aberta':
+    # do something when 'Case 1' is selected
+    #hil.set_scada_input_value('cont', 0)
+    hil.set_source_constant_value('en_inv', 0)
+    pass
+elif inputValue == 'Fechada':
+    # do something when 'Case 2' is selected
+    #hil.set_scada_input_value('cont', 1)
+    hil.set_source_constant_value('en_inv', 1)
+    pass
+
+]]></on_use_code>
+                <on_start_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed on simulation start.
+# NOTE: Variables specified here will be available in other handlers.
+# HIL API is imported as 'hil'
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# Change widget value by setting this variable.
+# NOTE: If you not specify 'widgetValue' variable or assign 'None' to it,
+# widget value won't be changed.
+widgetValue = None
+]]></on_start_code>
+                <on_stop_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed after simulation is stopped.
+# HIL API is imported as 'hil'
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# Change widget value by setting this variable.
+# NOTE: If you not specify 'widgetValue' variable or assign 'None' to it,
+# widget value won't be changed.
+widgetValue = None
+]]></on_stop_code>
+                <on_timer_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed periodically each 1000ms.
+# HIL API is imported as 'hil'
+# NOTE: Only read functions are available from the HIL API
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# Change the widget value by setting this variable.
+# NOTE: If you do not specify a 'widgetValue' variable or assign 'None' to it,
+# the widget value will not be changed.
+widgetValue = None
+]]></on_timer_code>
+                <on_start_code_source><![CDATA[Custom code]]></on_start_code_source>
+                <inputValue><![CDATA[Aberta]]></inputValue>
+                <availableValues><![CDATA[['Aberta', 'Fechada']]]></availableValues>
+                <unit><![CDATA[]]></unit>
+                <widget_settings>
+                    <x>1264</x>
+                    <y>912</y>
+                    <width>160</width>
+                    <height>32</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+            </component_data>
+        <component_data>
+                <id>654b875a647811efbbf4687a64d23b05</id>
+                <name><![CDATA[V_d*]]></name>
+                <type>DigitalDisplay</type>
+                <description><![CDATA[]]></description>
+                <data_type>Analog signal</data_type>
+                <code><![CDATA[# HIL API is imported as 'hil'
+# NOTE: Only read functions are available from the HIL API
+
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# mandatory variable used for storing value that will be displayed
+displayValue = 0.0
+
+]]></code>
+                <signal_name><![CDATA[V_d*]]></signal_name>
+                <unit><![CDATA[]]></unit>
+                <automatic_unit>True</automatic_unit>
+                <decimals><![CDATA[2]]></decimals>
+                <updateRate>500</updateRate>
+                <scaling_factor>1.0</scaling_factor>
+                <widget_settings>
+                    <x>1536</x>
+                    <y>968</y>
+                    <width>144</width>
+                    <height>56</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <color_range>False</color_range>
+                    <green_range>(0, 0, 0, 0)</green_range>
+                    <orange_range>(0, 0, 0, 0)</orange_range>
+                    <red_range>(0, 0, 0, 0)</red_range>
+                </advance_widget_settings>
+            </component_data>
+        <component_data>
+                <id>f250d4c9647811ef8566687a64d23b05</id>
+                <name><![CDATA[V_q*]]></name>
+                <type>DigitalDisplay</type>
+                <description><![CDATA[]]></description>
+                <data_type>Analog signal</data_type>
+                <code><![CDATA[# HIL API is imported as 'hil'
+# NOTE: Only read functions are available from the HIL API
+
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# mandatory variable used for storing value that will be displayed
+displayValue = 0.0
+
+]]></code>
+                <signal_name><![CDATA[V_q*]]></signal_name>
+                <unit><![CDATA[]]></unit>
+                <automatic_unit>True</automatic_unit>
+                <decimals><![CDATA[2]]></decimals>
+                <updateRate>500</updateRate>
+                <scaling_factor>1.0</scaling_factor>
+                <widget_settings>
+                    <x>1536</x>
+                    <y>1032</y>
+                    <width>144</width>
+                    <height>56</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <color_range>False</color_range>
+                    <green_range>(0, 0, 0, 0)</green_range>
+                    <orange_range>(0, 0, 0, 0)</orange_range>
+                    <red_range>(0, 0, 0, 0)</red_range>
+                </advance_widget_settings>
+            </component_data>
+        <component_data>
+                <id>b14d16b464ad11ef93be687a64d23b05</id>
+                <name><![CDATA[I_d]]></name>
+                <type>DigitalDisplay</type>
+                <description><![CDATA[]]></description>
+                <data_type>Analog signal</data_type>
+                <code><![CDATA[# HIL API is imported as 'hil'
+# NOTE: Only read functions are available from the HIL API
+
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# mandatory variable used for storing value that will be displayed
+displayValue = 0.0
+
+]]></code>
+                <signal_name><![CDATA[Id]]></signal_name>
+                <unit><![CDATA[]]></unit>
+                <automatic_unit>True</automatic_unit>
+                <decimals><![CDATA[2]]></decimals>
+                <updateRate>500</updateRate>
+                <scaling_factor>1.0</scaling_factor>
+                <widget_settings>
+                    <x>1704</x>
+                    <y>968</y>
+                    <width>144</width>
+                    <height>56</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <color_range>False</color_range>
+                    <green_range>(0, 0, 0, 0)</green_range>
+                    <orange_range>(0, 0, 0, 0)</orange_range>
+                    <red_range>(0, 0, 0, 0)</red_range>
+                </advance_widget_settings>
+            </component_data>
+        <component_data>
+                <id>c2c3c65c64ad11ef85bb687a64d23b05</id>
+                <name><![CDATA[I_q]]></name>
+                <type>DigitalDisplay</type>
+                <description><![CDATA[]]></description>
+                <data_type>Analog signal</data_type>
+                <code><![CDATA[# HIL API is imported as 'hil'
+# NOTE: Only read functions are available from the HIL API
+
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# mandatory variable used for storing value that will be displayed
+displayValue = 0.0
+
+]]></code>
+                <signal_name><![CDATA[Iq]]></signal_name>
+                <unit><![CDATA[]]></unit>
+                <automatic_unit>True</automatic_unit>
+                <decimals><![CDATA[2]]></decimals>
+                <updateRate>500</updateRate>
+                <scaling_factor>1.0</scaling_factor>
+                <widget_settings>
+                    <x>1704</x>
+                    <y>1032</y>
+                    <width>144</width>
+                    <height>56</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <color_range>False</color_range>
+                    <green_range>(0, 0, 0, 0)</green_range>
+                    <orange_range>(0, 0, 0, 0)</orange_range>
+                    <red_range>(0, 0, 0, 0)</red_range>
+                </advance_widget_settings>
+            </component_data>
+        <component_data>
+                <id>c283f4a1664111efb288687a64d23b05</id>
+                <name><![CDATA[Vd]]></name>
+                <type>DigitalDisplay</type>
+                <description><![CDATA[]]></description>
+                <data_type>Analog signal</data_type>
+                <code><![CDATA[# HIL API is imported as 'hil'
+# NOTE: Only read functions are available from the HIL API
+
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# mandatory variable used for storing value that will be displayed
+displayValue = 0.0
+
+]]></code>
+                <signal_name><![CDATA[Vd]]></signal_name>
+                <unit><![CDATA[V]]></unit>
+                <automatic_unit>True</automatic_unit>
+                <decimals><![CDATA[2]]></decimals>
+                <updateRate>500</updateRate>
+                <scaling_factor>1.0</scaling_factor>
+                <widget_settings>
+                    <x>1528</x>
+                    <y>800</y>
+                    <width>144</width>
+                    <height>56</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <color_range>False</color_range>
+                    <green_range>(0, 0, 0, 0)</green_range>
+                    <orange_range>(0, 0, 0, 0)</orange_range>
+                    <red_range>(0, 0, 0, 0)</red_range>
+                </advance_widget_settings>
+            </component_data>
+        <component_data>
+                <id>cea8eac5664111efb4a4687a64d23b05</id>
+                <name><![CDATA[Vq]]></name>
+                <type>DigitalDisplay</type>
+                <description><![CDATA[]]></description>
+                <data_type>Analog signal</data_type>
+                <code><![CDATA[# HIL API is imported as 'hil'
+# NOTE: Only read functions are available from the HIL API
+
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# mandatory variable used for storing value that will be displayed
+displayValue = 0.0
+
+]]></code>
+                <signal_name><![CDATA[Vq]]></signal_name>
+                <unit><![CDATA[V]]></unit>
+                <automatic_unit>True</automatic_unit>
+                <decimals><![CDATA[2]]></decimals>
+                <updateRate>500</updateRate>
+                <scaling_factor>1.0</scaling_factor>
+                <widget_settings>
+                    <x>1528</x>
+                    <y>864</y>
+                    <width>144</width>
+                    <height>56</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <color_range>False</color_range>
+                    <green_range>(0, 0, 0, 0)</green_range>
+                    <orange_range>(0, 0, 0, 0)</orange_range>
+                    <red_range>(0, 0, 0, 0)</red_range>
+                </advance_widget_settings>
+            </component_data>
+        <component_data>
+                <id>b3eda5ad76ab11efbb58687a64d23b02</id>
+                <name><![CDATA[PV monitor]]></name>
+                <type>PVDisplay</type>
+                <description><![CDATA[]]></description>
+                <pv_panel_name><![CDATA[Photovoltaic Panel]]></pv_panel_name>
+                <updateRate>250</updateRate>
+                <background_color>#ffffff</background_color>
+                <widget_settings>
+                    <x>984</x>
+                    <y>16</y>
+                    <width>1176</width>
+                    <height>736</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+            </component_data>
+        <component_data>
+                <id>26076e7976b811efb7c1687a64d23b02</id>
+                <name><![CDATA[Display]]></name>
+                <type>DigitalDisplay</type>
+                <description><![CDATA[]]></description>
+                <data_type>Analog signal</data_type>
+                <code><![CDATA[# HIL API is imported as 'hil'
+# NOTE: Only read functions are available from the HIL API
+
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# mandatory variable used for storing value that will be displayed
+displayValue = 0.0
+
+]]></code>
+                <signal_name><![CDATA[MPPT.MPPT_out]]></signal_name>
+                <unit><![CDATA[V]]></unit>
+                <automatic_unit>True</automatic_unit>
+                <decimals><![CDATA[2]]></decimals>
+                <updateRate>500</updateRate>
+                <scaling_factor>1.0</scaling_factor>
+                <widget_settings>
+                    <x>1312</x>
+                    <y>1096</y>
+                    <width>144</width>
+                    <height>56</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <color_range>False</color_range>
+                    <green_range>(0, 0, 0, 0)</green_range>
+                    <orange_range>(0, 0, 0, 0)</orange_range>
+                    <red_range>(0, 0, 0, 0)</red_range>
+                </advance_widget_settings>
+            </component_data>
+        <component_data>
+                <id>7ca926b2837511efb16e687a64d23b05</id>
+                <name><![CDATA[Dispatch]]></name>
+                <type>DigitalDisplay</type>
+                <description><![CDATA[None]]></description>
+                <data_type>Analog signal</data_type>
+                <code><![CDATA[#----------------------- MANDATORY IMPORT --------------------------
+# HIL Control Panel API
+
+# NOTE: Only read functions are available from HIL Control Panel API
+#-------------------------------------------------------------------
+
+# mandatory variable used for storing value
+# that will be displayed
+displayValue = 0.0
+
+]]></code>
+                <signal_name><![CDATA[P]]></signal_name>
+                <unit><![CDATA[]]></unit>
+                <automatic_unit>True</automatic_unit>
+                <decimals><![CDATA[2]]></decimals>
+                <updateRate>500</updateRate>
+                <scaling_factor>1.0</scaling_factor>
+                <widget_settings>
+                    <x>368</x>
+                    <y>72</y>
+                    <width>200</width>
+                    <height>80</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <color_range>False</color_range>
+                    <green_range>(0, 0, 0, 0)</green_range>
+                    <orange_range>(0, 0, 0, 0)</orange_range>
+                    <red_range>(0, 0, 0, 0)</red_range>
+                </advance_widget_settings>
+            </component_data>
+        <component_data>
+                <id>70b85262843111ef9996687a64d23b05</id>
+                <name><![CDATA[V_BAT]]></name>
+                <type>Gauge</type>
+                <description><![CDATA[None]]></description>
+                <data_type>Analog signal</data_type>
+                <code><![CDATA[#------------- MANDATORY IMPORT -----------------
+# HIL Control Panel API
+
+#------------------------------------------------
+
+# mandatory variable used for storing value
+# that will be displayed
+displayValue = 0.0
+
+]]></code>
+                <signal_name><![CDATA[V_bat]]></signal_name>
+                <unit><![CDATA[V]]></unit>
+                <automatic_unit>True</automatic_unit>
+                <updateRate>500</updateRate>
+                <decimals>2</decimals>
+                <scaling_factor>1.0</scaling_factor>
+                <widget_settings>
+                    <x>776</x>
+                    <y>808</y>
+                    <width>224</width>
+                    <height>136</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <color_range>False</color_range>
+                    <min>0.0</min>
+                    <max>500.0</max>
+                    <warning_range>(0, 0, 0, 0)</warning_range>
+                    <critical_range>(0, 0, 0, 0)</critical_range>
+                </advance_widget_settings>
+            </component_data>
+        <component_data>
+                <id>70ba9d14843111ef9926687a64d23b05</id>
+                <name><![CDATA[I_BAT]]></name>
+                <type>Gauge</type>
+                <description><![CDATA[None]]></description>
+                <data_type>Analog signal</data_type>
+                <code><![CDATA[#------------- MANDATORY IMPORT -----------------
+# HIL Control Panel API
+
+#------------------------------------------------
+
+# mandatory variable used for storing value
+# that will be displayed
+displayValue = 0.0
+
+]]></code>
+                <signal_name><![CDATA[I_bat]]></signal_name>
+                <unit><![CDATA[A]]></unit>
+                <automatic_unit>True</automatic_unit>
+                <updateRate>500</updateRate>
+                <decimals>2</decimals>
+                <scaling_factor>1.0</scaling_factor>
+                <widget_settings>
+                    <x>776</x>
+                    <y>648</y>
+                    <width>224</width>
+                    <height>136</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <color_range>False</color_range>
+                    <min>-50.0</min>
+                    <max>50.0</max>
+                    <warning_range>(0, 0, 0, 0)</warning_range>
+                    <critical_range>(0, 0, 0, 0)</critical_range>
+                </advance_widget_settings>
+            </component_data>
+        <component_data>
+                <id>44b4f84b9d3411ef97b2687a64d23b05</id>
+                <name><![CDATA[Dispatch calc]]></name>
+                <type>DigitalDisplay</type>
+                <description><![CDATA[None]]></description>
+                <data_type>Expression</data_type>
+                <code><![CDATA[#----------------------- MANDATORY IMPORT --------------------------
+# HIL Control Panel API
+
+# NOTE: Only read functions are available from HIL Control Panel API
+#-------------------------------------------------------------------
+
+# mandatory variable used for storing value
+# that will be displayed
+displayValue = 0.0
+
+Ia_rms = hil.read_analog_signal(name='Ia_rms')
+Ib_rms = hil.read_analog_signal(name='Ib_rms')
+Ic_rms = hil.read_analog_signal(name='Ic_rms')
+
+Va_rms = hil.read_analog_signal(name='Va_rms')
+Vb_rms = hil.read_analog_signal(name='Vb_rms')
+Vc_rms = hil.read_analog_signal(name='Vc_rms')
+
+displayValue = Ia_rms*Va_rms + Ib_rms*Vb_rms + Ic_rms*Vc_rms]]></code>
+                <signal_name><![CDATA[P]]></signal_name>
+                <unit><![CDATA[]]></unit>
+                <automatic_unit>True</automatic_unit>
+                <decimals><![CDATA[2]]></decimals>
+                <updateRate>500</updateRate>
+                <scaling_factor>1.0</scaling_factor>
+                <widget_settings>
+                    <x>648</x>
+                    <y>72</y>
+                    <width>200</width>
+                    <height>80</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <color_range>False</color_range>
+                    <green_range>(0, 0, 0, 0)</green_range>
+                    <orange_range>(0, 0, 0, 0)</orange_range>
+                    <red_range>(0, 0, 0, 0)</red_range>
+                </advance_widget_settings>
+            </component_data>
+        <component_data>
+                <id>946a4e23a1e011efae73687a64d23b05</id>
+                <name><![CDATA[Signal data logger1]]></name>
+                <type>SignalDataLogger</type>
+                <description><![CDATA[]]></description>
+                <data_type>Expression</data_type>
+                <expression_code><![CDATA[# HIL API is imported as 'hil'
+# NOTE: Only read functions are available from the HIL API
+
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+Ia_rms = hil.read_analog_signal(name='Ia_rms')
+Ib_rms = hil.read_analog_signal(name='Ib_rms')
+Ic_rms = hil.read_analog_signal(name='Ic_rms')
+
+Va_rms = hil.read_analog_signal(name='Va_rms')
+Vb_rms = hil.read_analog_signal(name='Vb_rms')
+Vc_rms = hil.read_analog_signal(name='Vc_rms')
+
+displayValue = Ia_rms*Va_rms + Ib_rms*Vb_rms + Ic_rms*Vc_rms
+# mandatory variable used for storing values that will be logged into the data file
+# specify logging data ("names" and "values" parts are mandatory)
+data = {
+    # signals/data names: ["Signal 1 name","Signal 2 name","Signal 3 name"]
+    "names": ["dispatch"],
+
+    # signals/data values: [sigVal1,sigVal2,sigVal3]
+    "values": [displayValue],
+    }
+# mandatory variable used for storing value
+# that will be displayed
+]]></expression_code>
+                <analog_signals><![CDATA[['P', 'Q', 'Vcc', 'Ia', 'Ib', 'Ic', 'Photovoltaic Panel', 'V_sc', 'I_sc']]]></analog_signals>
+                <digital_signals><![CDATA[[]]]></digital_signals>
+                <update_rate>250</update_rate>
+                <use_slower_update_rate>False</use_slower_update_rate>
+                <slower_update_rate>2</slower_update_rate>
+                <widget_settings>
+                    <x>360</x>
+                    <y>720</y>
+                    <width>120</width>
+                    <height>120</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <data_file_settings>
+                    <data_file_dir><![CDATA[G:\Meu Drive\2024\PPGEEC\Inverter\debug-111224]]></data_file_dir>
+                    <data_file_name><![CDATA[dispatch_data]]></data_file_name>
+                    <use_panel_file_dir>False</use_panel_file_dir>
+                    <data_file_format><![CDATA[csv]]></data_file_format>
+                    <use_file_name_suffix><![CDATA[True]]></use_file_name_suffix>
+                    <start_logging_on_sim_start><![CDATA[False]]></start_logging_on_sim_start>
+                </data_file_settings>
+            </component_data>
+        </components>
+</ui_settings>
